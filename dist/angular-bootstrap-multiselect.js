@@ -42,9 +42,9 @@
                 $scope.bindId = $scope.bindId || false;
 
                 // custom classes
-                $scope.containerClass = $scope.containerClass || 'multiselect-container';
-                $scope.toggleClass = $scope.toggleClass || 'multiselect-toggle';
-                $scope.dropdownClass = $scope.dropdownClass || 'multiselect-dropdown';
+                $scope.containerClass = $scope.containerClass || 'btn-group';
+                $scope.toggleClass = $scope.toggleClass || 'form-control dropdown-toggle btn btn-default btn-block';
+                $scope.dropdownClass = $scope.dropdownClass || 'dropdown-menu dropdown-menu-form';
 
                 $scope.searchFilter = '';
 
@@ -163,7 +163,8 @@
                 $scope.$on('$destroy', function() {
                     $document.off('click', closeHandler);
                     if (selectedOptionsWatcher) {
-                        selectedOptionsWatcher(); // Clean watcher
+                        // clean watcher
+                        selectedOptionsWatcher();
                     }
                     if (optionsWatcher) {
                         optionsWatcher();
@@ -294,11 +295,11 @@ angular.module('btorfs.multiselect.templates', ['multiselect.html']);
 
 angular.module("multiselect.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("multiselect.html",
-    "<div class=\"btn-group {{::containerClass}}\">\n" +
-    "    <button type=\"button\" class=\"form-control btn btn-default btn-block dropdown-toggle {{::toggleClass}}\" ng-click=\"toggleDropdown()\" ng-disabled=\"disabled\">\n" +
+    "<div class=\"{{::containerClass}}\">\n" +
+    "    <button type=\"button\" class=\"{{::toggleClass}}\" ng-click=\"toggleDropdown()\" ng-disabled=\"disabled\">\n" +
     "        {{getButtonText()}}&nbsp;<span class=\"caret\"></span>\n" +
     "    </button>\n" +
-    "    <ul class=\"dropdown-menu dropdown-menu-form {{::dropdownClass}}\"\n" +
+    "    <ul class=\"{{::dropdownClass}}\"\n" +
     "        ng-style=\"{display: open ? 'block' : 'none'}\" style=\"width: 100%; overflow-x: auto\">\n" +
     "\n" +
     "        <li ng-show=\"showSelectAll\">\n" +

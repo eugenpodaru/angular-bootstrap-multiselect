@@ -1,8 +1,8 @@
-<div class="btn-group {{::containerClass}}">
-    <button type="button" class="form-control btn btn-default btn-block dropdown-toggle {{::toggleClass}}" ng-click="toggleDropdown()" ng-disabled="disabled">
+<div class="{{::containerClass}}">
+    <button type="button" class="{{::toggleClass}}" ng-click="toggleDropdown()" ng-disabled="disabled">
         {{getButtonText()}}&nbsp;<span class="caret"></span>
     </button>
-    <ul class="dropdown-menu dropdown-menu-form {{::dropdownClass}}"
+    <ul class="{{::dropdownClass}}"
         ng-style="{display: open ? 'block' : 'none'}" style="width: 100%; overflow-x: auto">
 
         <li ng-show="showSelectAll">

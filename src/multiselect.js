@@ -42,9 +42,9 @@
                 $scope.bindId = $scope.bindId || false;
 
                 // custom classes
-                $scope.containerClass = $scope.containerClass || 'multiselect-container';
-                $scope.toggleClass = $scope.toggleClass || 'multiselect-toggle';
-                $scope.dropdownClass = $scope.dropdownClass || 'multiselect-dropdown';
+                $scope.containerClass = $scope.containerClass || 'btn-group';
+                $scope.toggleClass = $scope.toggleClass || 'form-control dropdown-toggle btn btn-default btn-block';
+                $scope.dropdownClass = $scope.dropdownClass || 'dropdown-menu dropdown-menu-form';
 
                 $scope.searchFilter = '';
 
@@ -163,7 +163,8 @@
                 $scope.$on('$destroy', function() {
                     $document.off('click', closeHandler);
                     if (selectedOptionsWatcher) {
-                        selectedOptionsWatcher(); // Clean watcher
+                        // clean watcher
+                        selectedOptionsWatcher();
                     }
                     if (optionsWatcher) {
                         optionsWatcher();

@@ -2,11 +2,11 @@ angular.module('btorfs.multiselect.templates', ['multiselect.html']);
 
 angular.module("multiselect.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("multiselect.html",
-    "<div class=\"btn-group {{::containerClass}}\">\n" +
-    "    <button type=\"button\" class=\"form-control btn btn-default btn-block dropdown-toggle {{::toggleClass}}\" ng-click=\"toggleDropdown()\" ng-disabled=\"disabled\">\n" +
+    "<div class=\"{{::containerClass}}\">\n" +
+    "    <button type=\"button\" class=\"{{::toggleClass}}\" ng-click=\"toggleDropdown()\" ng-disabled=\"disabled\">\n" +
     "        {{getButtonText()}}&nbsp;<span class=\"caret\"></span>\n" +
     "    </button>\n" +
-    "    <ul class=\"dropdown-menu dropdown-menu-form {{::dropdownClass}}\"\n" +
+    "    <ul class=\"{{::dropdownClass}}\"\n" +
     "        ng-style=\"{display: open ? 'block' : 'none'}\" style=\"width: 100%; overflow-x: auto\">\n" +
     "\n" +
     "        <li ng-show=\"showSelectAll\">\n" +
