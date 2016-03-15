@@ -22,7 +22,7 @@ angular.module("multiselect.html", []).run(["$templateCache", function($template
     "        </li>\n" +
     "        \n" +
     "        <li ng-if=\"selectedOptions.length > displayLimit\" ng-class=\"{disabled: selectedDisplayIndex - displayLimit < 0}\">\n" +
-    "            <a href=\"\" ng-click=\"pageUp(selectedDisplayIndex); $event.stopPropagation()\" class=\"text-center\">\n" +
+    "            <a href=\"\" ng-click=\"selectedDisplayIndex = pageUp(selectedDisplayIndex); $event.stopPropagation()\" class=\"text-center\">\n" +
     "                <span class=\"glyphicon glyphicon-chevron-up\"></span>\n" +
     "            </a>\n" +
     "        </li>\n" +
@@ -33,7 +33,7 @@ angular.module("multiselect.html", []).run(["$templateCache", function($template
     "            </a>\n" +
     "        </li>\n" +
     "        <li ng-if=\"selectedOptions.length > displayLimit\" ng-class=\"{disabled: selectedDisplayIndex + displayLimit > selectedOptions.length}\">\n" +
-    "            <a href=\"\" ng-click=\"pageDown(selectedDisplayIndex, selectedOptions.length); $event.stopPropagation()\" class=\"text-center\">\n" +
+    "            <a href=\"\" ng-click=\"selectedDisplayIndex = pageDown(selectedDisplayIndex, selectedOptions.length); $event.stopPropagation()\" class=\"text-center\">\n" +
     "                <span class=\"glyphicon glyphicon-chevron-down\"></span>\n" +
     "            </a>\n" +
     "        </li>\n" +
@@ -48,7 +48,7 @@ angular.module("multiselect.html", []).run(["$templateCache", function($template
     "\n" +
     "        <li ng-show=\"showSearch\" class=\"divider\"></li>\n" +
     "        <li ng-if=\"unselectedOptions.length > displayLimit\" ng-class=\"{disabled: unselectedDisplayIndex - displayLimit < 0}\">\n" +
-    "            <a href=\"\" ng-click=\"pageUp(unselectedDisplayIndex); $event.stopPropagation()\" class=\"text-center\">\n" +
+    "            <a href=\"\" ng-click=\"unselectedDisplayIndex = pageUp(unselectedDisplayIndex); $event.stopPropagation()\" class=\"text-center\">\n" +
     "                <span class=\"glyphicon glyphicon-chevron-up\"></span>\n" +
     "            </a>\n" +
     "        </li>\n" +
@@ -59,7 +59,7 @@ angular.module("multiselect.html", []).run(["$templateCache", function($template
     "            </a>\n" +
     "        </li>\n" +
     "        <li ng-if=\"unselectedOptions.length > displayLimit\" ng-class=\"{disabled: unselectedDisplayIndex + displayLimit > unselectedOptions.length}\">\n" +
-    "            <a href=\"\" ng-click=\"pageDown(unselectedDisplayIndex, unselectedOptions.length); $event.stopPropagation()\" class=\"text-center\">\n" +
+    "            <a href=\"\" ng-click=\"unselectedDisplayIndex = pageDown(unselectedDisplayIndex, unselectedOptions.length); $event.stopPropagation()\" class=\"text-center\">\n" +
     "                <span class=\"glyphicon glyphicon-chevron-down\"></span>\n" +
     "            </a>\n" +
     "        </li>\n" +

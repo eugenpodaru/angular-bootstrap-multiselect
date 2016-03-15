@@ -293,12 +293,12 @@
 
                 $scope.pageUp = function(startIndex) {
                     var newStartIndex = startIndex - $scope.displayLimit;
-                    startIndex = newStartIndex > 0 ? newStartIndex : 0;
+                    return newStartIndex > 0 ? newStartIndex : 0;
                 };
 
                 $scope.pageDown = function(startIndex, limit) {
                     var newStartIndex = startIndex + $scope.displayLimit;
-                    startIndex = newStartIndex < limit ? newStartIndex : limit - $scope.displayLimit - 1;
+                    return newStartIndex < limit ? newStartIndex : limit - $scope.displayLimit - 1;
                 };
 
                 updateOptions();
