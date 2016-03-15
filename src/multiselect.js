@@ -23,6 +23,7 @@
                 bindId: '@',
                 searchLimit: '=?',
                 selectionLimit: '=?',
+                displayLimit: '=?',
                 showSelectAll: '=?',
                 showUnselectAll: '=?',
                 showSearch: '=?',
@@ -38,6 +39,7 @@
             link: function($scope, $element, $attrs, $ngModelCtrl) {
                 $scope.selectionLimit = $scope.selectionLimit || 0;
                 $scope.searchLimit = $scope.searchLimit || 25;
+                $scope.displayLimit = $scope.displayLimit || 10;
                 $scope.defaultText = $scope.defaultText || 'Select';
                 $scope.bindId = $scope.bindId || false;
 
@@ -47,6 +49,10 @@
                 $scope.dropdownClass = $scope.dropdownClass || 'dropdown-menu dropdown-menu-form';
 
                 $scope.searchFilter = '';
+
+                // initialize the display indexes
+                $scope.selectedDisplayIndex = 0;
+                $scope.unselectedDisplayIndex = 0;
 
                 $scope.resolvedOptions = [];
 
@@ -283,6 +289,16 @@
                             return result;
                         }
                     }
+                };
+
+                $scope.pageUp = function(startIndex) {
+                    var newStartIndex = startIndex - $scope.displayLimit;
+                    startIndex = newStartIndex > 0 ? newStartIndex : 0;
+                };
+
+                $scope.pageDown = function(startIndex, limit) {
+                    var newStartIndex = startIndex + $scope.displayLimit;
+                    startIndex = newStartIndex < limit ? newStartIndex : limit - $scope.displayLimit - 1;
                 };
 
                 updateOptions();

@@ -2,8 +2,7 @@
     <button type="button" class="{{::toggleClass}}" ng-click="toggleDropdown()" ng-disabled="disabled">
         {{getButtonText()}}&nbsp;<span class="caret"></span>
     </button>
-    <ul class="{{::dropdownClass}}"
-        ng-style="{display: open ? 'block' : 'none'}" style="width: 100%; overflow-x: auto">
+    <ul class="{{::dropdownClass}}" ng-style="{display: open ? 'block' : 'none'}">
 
         <li ng-show="showSelectAll">
             <a ng-click="selectAll()" href="">
@@ -15,32 +14,49 @@
                 <span class="glyphicon glyphicon-remove"></span> Unselect All
             </a>
         </li>
-        <li ng-show="(showSelectAll || showUnselectAll)"
-            class="divider">
+        <li ng-show="(showSelectAll || showUnselectAll)" class="divider">
         </li>
-
-        <li role="presentation" ng-repeat="option in selectedOptions" class="active"
+        
+        <li ng-if="selectedOptions.length > displayLimit" ng-class="{disabled: selectedDisplayIndex - displayLimit < 0}">
+            <a href="" ng-click="pageUp(selectedDisplayIndex); $event.stopPropagation()">
+                <span class="glyphicon glyphicon-chevron-up"></span>
+            </a>
+        </li>
+        <li role="presentation" ng-repeat="option in selectedOptions | limiTo : displayLimit : selectedDisplayIndex" class="active"
             ng-if="selectionLimit && selectionLimit > 1">
             <a class="item-selected" href="" ng-click="toggleItem(option); $event.stopPropagation()">
-                <span class="glyphicon glyphicon-remove"></span>
-                {{getDisplay(option)}}
+                <span class="glyphicon glyphicon-remove"></span> {{getDisplay(option)}}
+            </a>
+        </li>
+        <li ng-if="selectedOptions.length > displayLimit" ng-class="{disabled: selectedDisplayIndex + displayLimit > selectedOptions.length}">
+            <a href="" ng-click="pageDown(selectedDisplayIndex, selectedOptions.length); $event.stopPropagation()">
+                <span class="glyphicon glyphicon-chevron-down"></span>
             </a>
         </li>
         <li ng-show="selectedOptions.length > 0" class="divider"></li>
 
         <li ng-show="showSearch">
             <div class="dropdown-header">
-                <input type="text" class="form-control input-sm" style="width: 100%;"
-                       ng-model="searchFilter" placeholder="Search..." ng-change="updateOptions()"/>
+                <input type="text" class="form-control input-sm" style="width: 100%;" ng-model="searchFilter" placeholder="Search..." ng-change="updateOptions()"
+                />
             </div>
         </li>
 
         <li ng-show="showSearch" class="divider"></li>
-        <li role="presentation" ng-repeat="option in unselectedOptions | filter:search() | limitTo: searchLimit"
-            ng-if="!isSelected(option)"
-            ng-class="{disabled : selectionLimit && selectionLimit > 1 && selectedOptions.length >= selectionLimit}">
+        <li ng-if="unselectedOptions.length > displayLimit" ng-class="{disabled: unselectedDisplayIndex - displayLimit < 0}">
+            <a href="" ng-click="pageUp(unselectedDisplayIndex); $event.stopPropagation()">
+                <span class="glyphicon glyphicon-chevron-up"></span>
+            </a>
+        </li>
+        <li role="presentation" ng-repeat="option in unselectedOptions | filter:search() | limitTo: displayLimit : unselectedDisplayIndex"
+            ng-if="!isSelected(option)" ng-class="{disabled : selectionLimit && selectionLimit > 1 && selectedOptions.length >= selectionLimit}">
             <a class="item-unselected" href="" ng-click="toggleItem(option); $event.stopPropagation()">
                 {{getDisplay(option)}}
+            </a>
+        </li>
+        <li ng-if="unselectedOptions.length > displayLimit" ng-class="{disabled: unselectedDisplayIndex + displayLimit > unselectedOptions.length}">
+            <a href="" ng-click="pageDown(unselectedDisplayIndex, unselectedOptions.length); $event.stopPropagation()">
+                <span class="glyphicon glyphicon-chevron-down"></span>
             </a>
         </li>
 

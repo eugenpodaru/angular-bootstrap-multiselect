@@ -6,8 +6,7 @@ angular.module("multiselect.html", []).run(["$templateCache", function($template
     "    <button type=\"button\" class=\"{{::toggleClass}}\" ng-click=\"toggleDropdown()\" ng-disabled=\"disabled\">\n" +
     "        {{getButtonText()}}&nbsp;<span class=\"caret\"></span>\n" +
     "    </button>\n" +
-    "    <ul class=\"{{::dropdownClass}}\"\n" +
-    "        ng-style=\"{display: open ? 'block' : 'none'}\" style=\"width: 100%; overflow-x: auto\">\n" +
+    "    <ul class=\"{{::dropdownClass}}\" ng-style=\"{display: open ? 'block' : 'none'}\">\n" +
     "\n" +
     "        <li ng-show=\"showSelectAll\">\n" +
     "            <a ng-click=\"selectAll()\" href=\"\">\n" +
@@ -19,32 +18,49 @@ angular.module("multiselect.html", []).run(["$templateCache", function($template
     "                <span class=\"glyphicon glyphicon-remove\"></span> Unselect All\n" +
     "            </a>\n" +
     "        </li>\n" +
-    "        <li ng-show=\"(showSelectAll || showUnselectAll)\"\n" +
-    "            class=\"divider\">\n" +
+    "        <li ng-show=\"(showSelectAll || showUnselectAll)\" class=\"divider\">\n" +
     "        </li>\n" +
-    "\n" +
-    "        <li role=\"presentation\" ng-repeat=\"option in selectedOptions\" class=\"active\"\n" +
+    "        \n" +
+    "        <li ng-if=\"selectedOptions.length > displayLimit\" ng-class=\"{disabled: selectedDisplayIndex - displayLimit < 0}\">\n" +
+    "            <a href=\"\" ng-click=\"pageUp(selectedDisplayIndex); $event.stopPropagation()\">\n" +
+    "                <span class=\"glyphicon glyphicon-chevron-up\"></span>\n" +
+    "            </a>\n" +
+    "        </li>\n" +
+    "        <li role=\"presentation\" ng-repeat=\"option in selectedOptions | limiTo : displayLimit : selectedDisplayIndex\" class=\"active\"\n" +
     "            ng-if=\"selectionLimit && selectionLimit > 1\">\n" +
     "            <a class=\"item-selected\" href=\"\" ng-click=\"toggleItem(option); $event.stopPropagation()\">\n" +
-    "                <span class=\"glyphicon glyphicon-remove\"></span>\n" +
-    "                {{getDisplay(option)}}\n" +
+    "                <span class=\"glyphicon glyphicon-remove\"></span> {{getDisplay(option)}}\n" +
+    "            </a>\n" +
+    "        </li>\n" +
+    "        <li ng-if=\"selectedOptions.length > displayLimit\" ng-class=\"{disabled: selectedDisplayIndex + displayLimit > selectedOptions.length}\">\n" +
+    "            <a href=\"\" ng-click=\"pageDown(selectedDisplayIndex, selectedOptions.length); $event.stopPropagation()\">\n" +
+    "                <span class=\"glyphicon glyphicon-chevron-down\"></span>\n" +
     "            </a>\n" +
     "        </li>\n" +
     "        <li ng-show=\"selectedOptions.length > 0\" class=\"divider\"></li>\n" +
     "\n" +
     "        <li ng-show=\"showSearch\">\n" +
     "            <div class=\"dropdown-header\">\n" +
-    "                <input type=\"text\" class=\"form-control input-sm\" style=\"width: 100%;\"\n" +
-    "                       ng-model=\"searchFilter\" placeholder=\"Search...\" ng-change=\"updateOptions()\"/>\n" +
+    "                <input type=\"text\" class=\"form-control input-sm\" style=\"width: 100%;\" ng-model=\"searchFilter\" placeholder=\"Search...\" ng-change=\"updateOptions()\"\n" +
+    "                />\n" +
     "            </div>\n" +
     "        </li>\n" +
     "\n" +
     "        <li ng-show=\"showSearch\" class=\"divider\"></li>\n" +
-    "        <li role=\"presentation\" ng-repeat=\"option in unselectedOptions | filter:search() | limitTo: searchLimit\"\n" +
-    "            ng-if=\"!isSelected(option)\"\n" +
-    "            ng-class=\"{disabled : selectionLimit && selectionLimit > 1 && selectedOptions.length >= selectionLimit}\">\n" +
+    "        <li ng-if=\"unselectedOptions.length > displayLimit\" ng-class=\"{disabled: unselectedDisplayIndex - displayLimit < 0}\">\n" +
+    "            <a href=\"\" ng-click=\"pageUp(unselectedDisplayIndex); $event.stopPropagation()\">\n" +
+    "                <span class=\"glyphicon glyphicon-chevron-up\"></span>\n" +
+    "            </a>\n" +
+    "        </li>\n" +
+    "        <li role=\"presentation\" ng-repeat=\"option in unselectedOptions | filter:search() | limitTo: displayLimit : unselectedDisplayIndex\"\n" +
+    "            ng-if=\"!isSelected(option)\" ng-class=\"{disabled : selectionLimit && selectionLimit > 1 && selectedOptions.length >= selectionLimit}\">\n" +
     "            <a class=\"item-unselected\" href=\"\" ng-click=\"toggleItem(option); $event.stopPropagation()\">\n" +
     "                {{getDisplay(option)}}\n" +
+    "            </a>\n" +
+    "        </li>\n" +
+    "        <li ng-if=\"unselectedOptions.length > displayLimit\" ng-class=\"{disabled: unselectedDisplayIndex + displayLimit > unselectedOptions.length}\">\n" +
+    "            <a href=\"\" ng-click=\"pageDown(unselectedDisplayIndex, unselectedOptions.length); $event.stopPropagation()\">\n" +
+    "                <span class=\"glyphicon glyphicon-chevron-down\"></span>\n" +
     "            </a>\n" +
     "        </li>\n" +
     "\n" +
