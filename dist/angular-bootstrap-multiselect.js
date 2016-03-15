@@ -28,7 +28,10 @@
                 showSearch: '=?',
                 searchFilter: '=?',
                 disabled: '=?ngDisabled',
-                defaultText: '@'
+                defaultText: '@',
+                containerClass: '@',
+                toggleClass: '@',
+                dropdownClass: '@'
             },
             require: 'ngModel',
             templateUrl: 'multiselect.html',
@@ -37,6 +40,11 @@
                 $scope.searchLimit = $scope.searchLimit || 25;
                 $scope.defaultText = $scope.defaultText || 'Select';
                 $scope.bindId = $scope.bindId || false;
+
+                // custom classes
+                $scope.containerClass = $scope.containerClass || 'multiselect-container';
+                $scope.toggleClass = $scope.toggleClass || 'multiselect-toggle';
+                $scope.dropdownClass = $scope.dropdownClass || 'multiselect-dropdown';
 
                 $scope.searchFilter = '';
 
@@ -65,7 +73,9 @@
                         if ($scope.selectedOptions) {
                             $scope.selectedOptions = [];
                         }
-                        $scope.unselectedOptions = $scope.resolvedOptions.slice(); // Take a copy
+
+                        // take a copy
+                        $scope.unselectedOptions = $scope.resolvedOptions.slice();
                     } else {
                         $scope.selectedOptions = $scope.resolvedOptions.filter(function(el) {
                             var id = $scope.getId(el);
@@ -86,6 +96,7 @@
                             }
                             return false;
                         });
+
                         $scope.unselectedOptions = $scope.resolvedOptions.filter(function(el) {
                             return $scope.selectedOptions.indexOf(el) < 0;
                         });
@@ -103,6 +114,26 @@
                         $scope.resolvedOptions = $scope.options;
                         updateSelectionLists();
                     }
+                };
+                
+                var updateViewValue = function(){
+                  var viewValue = undefined;
+                    if ($scope.selectedOptions.length === 1) {
+                        if ($scope.bindId) {
+                            viewValue = $scope.getId($scope.selectedOptions[0]);
+                        } else {
+                            viewValue = $scope.selectedOptions[0];
+                        }
+                    } else if ($scope.selectedOptions.length > 1) {
+                        if ($scope.bindId) {
+                            viewValue = $scope.selectedOptions.map(function(el) {
+                                return $scope.getId(el);
+                            });
+                        } else {
+                            viewValue = angular.copy($scope.selectedOptions);
+                        }
+                    }
+                    $ngModelCtrl.$setViewValue(viewValue);  
                 };
 
                 $ngModelCtrl.$render = function() {
@@ -122,23 +153,7 @@
                 };
 
                 var selectedOptionsWatcher = $scope.$watch('selectedOptions', function() {
-                    var viewValue = undefined;
-                    if ($scope.selectedOptions.length === 1) {
-                        if ($scope.bindId) {
-                            viewValue = $scope.getId($scope.selectedOptions[0]);
-                        } else {
-                            viewValue = $scope.selectedOptions[0];
-                        }
-                    } else if ($scope.selectedOptions.length > 1) {
-                        if ($scope.bindId) {
-                            viewValue = $scope.selectedOptions.map(function(el){
-                               return $scope.getId(el); 
-                            });
-                        } else {
-                            viewValue = angular.copy($scope.selectedOptions);
-                        }
-                    }
-                    $ngModelCtrl.$setViewValue(viewValue);
+                    updateViewValue();
                 }, true);
 
                 var optionsWatcher = $scope.$watch('options', function() {
@@ -195,12 +210,12 @@
                         var unselectedIndex = $scope.unselectedOptions.indexOf(item);
                         $scope.unselectedOptions.splice(unselectedIndex, 1);
                         $scope.selectedOptions.push(item);
-                    } else if(!currentlySelected && $scope.selectionLimit === 1){
+                    } else if (!currentlySelected && $scope.selectionLimit === 1) {
                         var unselectedIndex = $scope.unselectedOptions.indexOf(item);
                         $scope.unselectedOptions.splice(unselectedIndex, 1);
                         $scope.selectedOptions.splice(0, 1);
                         $scope.selectedOptions.push(item);
-                        
+
                         closeHandler();
                     }
                 };
@@ -279,11 +294,11 @@ angular.module('btorfs.multiselect.templates', ['multiselect.html']);
 
 angular.module("multiselect.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("multiselect.html",
-    "<div class=\"btn-group multiselect-container\">\n" +
-    "    <button type=\"button\" class=\"form-control btn btn-default btn-block dropdown-toggle multiselect-toggle\" ng-click=\"toggleDropdown()\" ng-disabled=\"disabled\">\n" +
+    "<div class=\"btn-group {{::containerClass}}\">\n" +
+    "    <button type=\"button\" class=\"form-control btn btn-default btn-block dropdown-toggle {{::toggleClass}}\" ng-click=\"toggleDropdown()\" ng-disabled=\"disabled\">\n" +
     "        {{getButtonText()}}&nbsp;<span class=\"caret\"></span>\n" +
     "    </button>\n" +
-    "    <ul class=\"dropdown-menu dropdown-menu-form multiselect-dropdown-menu\"\n" +
+    "    <ul class=\"dropdown-menu dropdown-menu-form {{::dropdownClass}}\"\n" +
     "        ng-style=\"{display: open ? 'block' : 'none'}\" style=\"width: 100%; overflow-x: auto\">\n" +
     "\n" +
     "        <li ng-show=\"showSelectAll\">\n" +

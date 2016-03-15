@@ -1,8 +1,8 @@
-<div class="btn-group multiselect-container">
-    <button type="button" class="form-control btn btn-default btn-block dropdown-toggle multiselect-toggle" ng-click="toggleDropdown()" ng-disabled="disabled">
+<div class="btn-group {{::containerClass}}">
+    <button type="button" class="form-control btn btn-default btn-block dropdown-toggle {{::toggleClass}}" ng-click="toggleDropdown()" ng-disabled="disabled">
         {{getButtonText()}}&nbsp;<span class="caret"></span>
     </button>
-    <ul class="dropdown-menu dropdown-menu-form multiselect-dropdown-menu"
+    <ul class="dropdown-menu dropdown-menu-form {{::dropdownClass}}"
         ng-style="{display: open ? 'block' : 'none'}" style="width: 100%; overflow-x: auto">
 
         <li ng-show="showSelectAll">
