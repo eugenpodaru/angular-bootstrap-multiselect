@@ -18,18 +18,18 @@
         </li>
         
         <li ng-if="selectedOptions.length > displayLimit" ng-class="{disabled: selectedDisplayIndex - displayLimit < 0}">
-            <a href="" ng-click="pageUp(selectedDisplayIndex); $event.stopPropagation()">
+            <a href="" ng-click="pageUp(selectedDisplayIndex); $event.stopPropagation()" class="text-center">
                 <span class="glyphicon glyphicon-chevron-up"></span>
             </a>
         </li>
-        <li role="presentation" ng-repeat="option in selectedOptions | limiTo : displayLimit : selectedDisplayIndex" class="active"
+        <li role="presentation" ng-repeat="option in selectedOptions | limitTo : displayLimit : selectedDisplayIndex" class="active"
             ng-if="selectionLimit && selectionLimit > 1">
             <a class="item-selected" href="" ng-click="toggleItem(option); $event.stopPropagation()">
                 <span class="glyphicon glyphicon-remove"></span> {{getDisplay(option)}}
             </a>
         </li>
         <li ng-if="selectedOptions.length > displayLimit" ng-class="{disabled: selectedDisplayIndex + displayLimit > selectedOptions.length}">
-            <a href="" ng-click="pageDown(selectedDisplayIndex, selectedOptions.length); $event.stopPropagation()">
+            <a href="" ng-click="pageDown(selectedDisplayIndex, selectedOptions.length); $event.stopPropagation()" class="text-center">
                 <span class="glyphicon glyphicon-chevron-down"></span>
             </a>
         </li>
@@ -44,7 +44,7 @@
 
         <li ng-show="showSearch" class="divider"></li>
         <li ng-if="unselectedOptions.length > displayLimit" ng-class="{disabled: unselectedDisplayIndex - displayLimit < 0}">
-            <a href="" ng-click="pageUp(unselectedDisplayIndex); $event.stopPropagation()">
+            <a href="" ng-click="pageUp(unselectedDisplayIndex); $event.stopPropagation()" class="text-center">
                 <span class="glyphicon glyphicon-chevron-up"></span>
             </a>
         </li>
@@ -55,7 +55,7 @@
             </a>
         </li>
         <li ng-if="unselectedOptions.length > displayLimit" ng-class="{disabled: unselectedDisplayIndex + displayLimit > unselectedOptions.length}">
-            <a href="" ng-click="pageDown(unselectedDisplayIndex, unselectedOptions.length); $event.stopPropagation()">
+            <a href="" ng-click="pageDown(unselectedDisplayIndex, unselectedOptions.length); $event.stopPropagation()" class="text-center">
                 <span class="glyphicon glyphicon-chevron-down"></span>
             </a>
         </li>
