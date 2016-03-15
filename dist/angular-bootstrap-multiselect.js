@@ -39,9 +39,6 @@
                 $scope.searchFilter = '';
 
                 $scope.resolvedOptions = [];
-                if (typeof $scope.options !== 'function') {
-                    $scope.resolvedOptions = $scope.options;
-                }
 
                 if (typeof $attrs.disabled != 'undefined') {
                     $scope.disabled = true;
@@ -84,6 +81,19 @@
                     }
                 };
 
+                var updateOptions = function() {
+                    $scope.resolvedOptions = [];
+                    if (typeof $scope.options === 'function') {
+                        $scope.options().then(function(resolvedOptions) {
+                            $scope.resolvedOptions = resolvedOptions;
+                            updateSelectionLists();
+                        });
+                    } else {
+                        $scope.resolvedOptions = $scope.options;
+                        updateSelectionLists();
+                    }
+                };
+
                 $ngModelCtrl.$render = function() {
                     updateSelectionLists();
                 };
@@ -105,7 +115,7 @@
                 }, true);
 
                 var optionsWatcher = $scope.$watch('options', function() {
-                    updateSelectionLists();
+                    updateOptions();
                 }, true);
 
                 $scope.$on('$destroy', function() {
@@ -205,15 +215,6 @@
                     return false;
                 };
 
-                $scope.updateOptions = function() {
-                    if (typeof $scope.options === 'function') {
-                        $scope.options().then(function(resolvedOptions) {
-                            $scope.resolvedOptions = resolvedOptions;
-                            updateSelectionLists();
-                        });
-                    }
-                };
-
                 // This search function is optimized to take into account the search limit.
                 // Using angular limitTo filter is not efficient for big lists, because it still runs the search for
                 // all elements, even if the limit is reached
@@ -234,17 +235,10 @@
                     }
                 };
 
-                $scope.resolvedOptions = [];
-                if (typeof $scope.options !== 'function') {
-                    $scope.resolvedOptions = $scope.options;
-                } else {
-                    $scope.updateOptions();
-                }
-
+                updateOptions();
             }
         };
     }]);
-
 } ());
 
 angular.module('btorfs.multiselect.templates', ['multiselect.html']);
