@@ -1,10 +1,10 @@
-(function () {
+(function() {
     'use strict';
 
     var multiselect = angular.module('btorfs.multiselect', ['btorfs.multiselect.templates']);
 
-    multiselect.getRecursiveProperty = function (object, path) {
-        return path.split('.').reduce(function (object, x) {
+    multiselect.getRecursiveProperty = function(object, path) {
+        return path.split('.').reduce(function(object, x) {
             if (object) {
                 return object[x];
             } else {
@@ -13,7 +13,7 @@
         }, object)
     };
 
-    multiselect.directive('multiselect', function ($filter, $document, $log) {
+    multiselect.directive('multiselect', function($filter, $document, $log) {
         return {
             restrict: 'AE',
             scope: {
@@ -31,7 +31,7 @@
             },
             require: 'ngModel',
             templateUrl: 'multiselect.html',
-            link: function ($scope, $element, $attrs, $ngModelCtrl) {
+            link: function($scope, $element, $attrs, $ngModelCtrl) {
                 $scope.selectionLimit = $scope.selectionLimit || 0;
                 $scope.searchLimit = $scope.searchLimit || 25;
                 $scope.defaultText = $scope.defaultText || 'Select';
@@ -47,13 +47,13 @@
                     $scope.disabled = true;
                 }
 
-                $scope.toggleDropdown = function () {
+                $scope.toggleDropdown = function() {
                     $scope.open = !$scope.open;
                 };
 
-                var closeHandler = function (event) {
+                var closeHandler = function(event) {
                     if (!$element[0].contains(event.target)) {
-                        $scope.$apply(function () {
+                        $scope.$apply(function() {
                             $scope.open = false;
                         });
                     }
@@ -61,14 +61,14 @@
 
                 $document.on('click', closeHandler);
 
-                var updateSelectionLists = function () {
+                var updateSelectionLists = function() {
                     if (!$ngModelCtrl.$viewValue) {
                         if ($scope.selectedOptions) {
                             $scope.selectedOptions = [];
                         }
                         $scope.unselectedOptions = $scope.resolvedOptions.slice(); // Take a copy
                     } else {
-                        $scope.selectedOptions = $scope.resolvedOptions.filter(function (el) {
+                        $scope.selectedOptions = $scope.resolvedOptions.filter(function(el) {
                             var id = $scope.getId(el);
                             for (var i = 0; i < $ngModelCtrl.$viewValue.length; i++) {
                                 var selectedId = $scope.getId($ngModelCtrl.$viewValue[i]);
@@ -78,21 +78,21 @@
                             }
                             return false;
                         });
-                        $scope.unselectedOptions = $scope.resolvedOptions.filter(function (el) {
+                        $scope.unselectedOptions = $scope.resolvedOptions.filter(function(el) {
                             return $scope.selectedOptions.indexOf(el) < 0;
                         });
                     }
                 };
 
-                $ngModelCtrl.$render = function () {
+                $ngModelCtrl.$render = function() {
                     updateSelectionLists();
                 };
 
-                $ngModelCtrl.$viewChangeListeners.push(function () {
+                $ngModelCtrl.$viewChangeListeners.push(function() {
                     updateSelectionLists();
                 });
 
-                $ngModelCtrl.$isEmpty = function (value) {
+                $ngModelCtrl.$isEmpty = function(value) {
                     if (value) {
                         return (value.length === 0);
                     } else {
@@ -100,18 +100,25 @@
                     }
                 };
 
-                var watcher = $scope.$watch('selectedOptions', function () {
+                var selectedOptionsWatcher = $scope.$watch('selectedOptions', function() {
                     $ngModelCtrl.$setViewValue(angular.copy($scope.selectedOptions));
                 }, true);
 
-                $scope.$on('$destroy', function () {
+                var optionsWatcher = $scope.$watch('options', function() {
+                    updateSelectionLists();
+                }, true);
+
+                $scope.$on('$destroy', function() {
                     $document.off('click', closeHandler);
-                    if (watcher) {
-                        watcher(); // Clean watcher
+                    if (selectedOptionsWatcher) {
+                        selectedOptionsWatcher(); // Clean watcher
+                    }
+                    if (optionsWatcher) {
+                        optionsWatcher();
                     }
                 });
 
-                $scope.getButtonText = function () {
+                $scope.getButtonText = function() {
                     if ($scope.selectedOptions && $scope.selectedOptions.length === 1) {
                         return $scope.getDisplay($scope.selectedOptions[0]);
                     }
@@ -128,17 +135,17 @@
                     }
                 };
 
-                $scope.selectAll = function () {
+                $scope.selectAll = function() {
                     $scope.selectedOptions = $scope.resolvedOptions;
                     $scope.unselectedOptions = [];
                 };
 
-                $scope.unselectAll = function () {
+                $scope.unselectAll = function() {
                     $scope.selectedOptions = [];
                     $scope.unselectedOptions = $scope.resolvedOptions;
                 };
 
-                $scope.toggleItem = function (item) {
+                $scope.toggleItem = function(item) {
                     if (typeof $scope.selectedOptions === 'undefined') {
                         $scope.selectedOptions = [];
                     }
@@ -154,7 +161,7 @@
                     }
                 };
 
-                $scope.getId = function (item) {
+                $scope.getId = function(item) {
                     if (angular.isString(item)) {
                         return item;
                     } else if (angular.isObject(item)) {
@@ -169,7 +176,7 @@
                     }
                 };
 
-                $scope.getDisplay = function (item) {
+                $scope.getDisplay = function(item) {
                     if (angular.isString(item)) {
                         return item;
                     } else if (angular.isObject(item)) {
@@ -184,7 +191,7 @@
                     }
                 };
 
-                $scope.isSelected = function (item) {
+                $scope.isSelected = function(item) {
                     if (!$scope.selectedOptions) {
                         return false;
                     }
@@ -198,9 +205,9 @@
                     return false;
                 };
 
-                $scope.updateOptions = function () {
+                $scope.updateOptions = function() {
                     if (typeof $scope.options === 'function') {
-                        $scope.options().then(function (resolvedOptions) {
+                        $scope.options().then(function(resolvedOptions) {
                             $scope.resolvedOptions = resolvedOptions;
                             updateSelectionLists();
                         });
@@ -210,9 +217,9 @@
                 // This search function is optimized to take into account the search limit.
                 // Using angular limitTo filter is not efficient for big lists, because it still runs the search for
                 // all elements, even if the limit is reached
-                $scope.search = function () {
+                $scope.search = function() {
                     var counter = 0;
-                    return function (item) {
+                    return function(item) {
                         if (counter > $scope.searchLimit) {
                             return false;
                         }
@@ -238,4 +245,4 @@
         };
     });
 
-}());
+} ());
