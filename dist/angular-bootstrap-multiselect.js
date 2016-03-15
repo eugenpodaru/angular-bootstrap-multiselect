@@ -55,6 +55,13 @@
                 $scope.unselectedDisplayIndex = 0;
 
                 $scope.resolvedOptions = [];
+                $scope.selectedOptions = [];
+                $scope.unselectedOptions = [];
+
+                // initialize the views
+                $scope.selectedOptionsView = [];
+                $scope.unselectedOptionsFiltered = [];
+                $scope.unselectedOptionsView = [];
 
                 if (typeof $attrs.disabled != 'undefined') {
                     $scope.disabled = true;
@@ -74,12 +81,43 @@
 
                 $document.on('click', closeHandler);
 
+                // This search function is optimized to take into account the search limit.
+                // Using angular limitTo filter is not efficient for big lists, because it still runs the search for
+                // all elements, even if the limit is reached
+                var search = function() {
+                    var counter = 0;
+                    return function(item) {
+                        if (counter > $scope.searchLimit) {
+                            return false;
+                        }
+                        var displayName = $scope.getDisplay(item);
+                        if (displayName) {
+                            var result = displayName.toLowerCase().indexOf($scope.searchFilter.toLowerCase()) > -1;
+                            if (result) {
+                                counter++;
+                            }
+                            return result;
+                        }
+                    }
+                };
+
+                var updateSelectionViews = function(reset) {
+                    if (reset) {
+                        $scope.selectedDisplayIndex = 0;
+                        $scope.unselectedDisplayIndex = 0;
+                    }
+
+                    $scope.selectedOptionsView = $scope.selectedOptions.slice($scope.selectedDisplayIndex,
+                        $scope.selectedDisplayIndex + $scope.displayLimit);
+
+                    $scope.unselectedOptionsFiltered = $filter('filter')($scope.unselectedOptions, search());
+                    $scope.unselectedOptionsView = $scope.unselectedOptionsFiltered.slice($scope.unselectedDisplayIndex,
+                        $scope.unselectedDisplayIndex + $scope.displayLimit);
+                };
+
                 var updateSelectionLists = function() {
                     if (!$ngModelCtrl.$viewValue) {
-                        if ($scope.selectedOptions) {
-                            $scope.selectedOptions = [];
-                        }
-
+                        $scope.selectedOptions = [];
                         // take a copy
                         $scope.unselectedOptions = $scope.resolvedOptions.slice();
                     } else {
@@ -107,6 +145,8 @@
                             return $scope.selectedOptions.indexOf(el) < 0;
                         });
                     }
+
+                    updateSelectionViews(true);
                 };
 
                 var updateOptions = function() {
@@ -194,20 +234,25 @@
                     }
                 };
 
+                $scope.update = function() {
+                    updateSelectionViews(true);
+                };
+
                 $scope.selectAll = function() {
-                    $scope.selectedOptions = $scope.resolvedOptions;
+                    $scope.selectedOptions = $scope.resolvedOptions.slice();
                     $scope.unselectedOptions = [];
+
+                    updateSelectionViews(true);
                 };
 
                 $scope.unselectAll = function() {
                     $scope.selectedOptions = [];
-                    $scope.unselectedOptions = $scope.resolvedOptions;
+                    $scope.unselectedOptions = $scope.resolvedOptions.slice();
+
+                    updateSelectionViews(true);
                 };
 
                 $scope.toggleItem = function(item) {
-                    if (typeof $scope.selectedOptions === 'undefined') {
-                        $scope.selectedOptions = [];
-                    }
                     var selectedIndex = $scope.selectedOptions.indexOf(item);
                     var currentlySelected = (selectedIndex !== -1);
                     if (currentlySelected && $scope.selectionLimit > 1) {
@@ -225,6 +270,8 @@
 
                         $scope.toggleDropdown();
                     }
+
+                    updateSelectionViews();
                 };
 
                 $scope.getId = function(item) {
@@ -257,48 +304,34 @@
                     }
                 };
 
-                $scope.isSelected = function(item) {
-                    if (!$scope.selectedOptions) {
-                        return false;
-                    }
-                    var itemId = $scope.getId(item);
-                    for (var i = 0; i < $scope.selectedOptions.length; i++) {
-                        var selectedElement = $scope.selectedOptions[i];
-                        if ($scope.getId(selectedElement) === itemId) {
-                            return true;
-                        }
-                    }
-                    return false;
+                $scope.unselectedPageUp = function() {
+                    var newStartIndex = $scope.unselectedDisplayIndex - $scope.displayLimit;
+                    $scope.unselectedDisplayIndex = newStartIndex > 0 ? newStartIndex : 0;
+
+                    updateSelectionViews();
                 };
 
-                // This search function is optimized to take into account the search limit.
-                // Using angular limitTo filter is not efficient for big lists, because it still runs the search for
-                // all elements, even if the limit is reached
-                $scope.search = function() {
-                    var counter = 0;
-                    return function(item) {
-                        if (counter > $scope.searchLimit) {
-                            return false;
-                        }
-                        var displayName = $scope.getDisplay(item);
-                        if (displayName) {
-                            var result = displayName.toLowerCase().indexOf($scope.searchFilter.toLowerCase()) > -1;
-                            if (result) {
-                                counter++;
-                            }
-                            return result;
-                        }
-                    }
+                $scope.unselectedPageDown = function() {
+                    var limit = $scope.unselectedOptionsFiltered.length;
+                    var newStartIndex = $scope.unselectedDisplayIndex + $scope.displayLimit;
+                    $scope.unselectedDisplayIndex = newStartIndex < limit ? newStartIndex : limit - $scope.displayLimit - 1;
+
+                    updateSelectionViews();
                 };
 
-                $scope.pageUp = function(startIndex) {
-                    var newStartIndex = startIndex - $scope.displayLimit;
-                    return newStartIndex > 0 ? newStartIndex : 0;
+                $scope.selectedPageUp = function() {
+                    var newStartIndex = $scope.selectedDisplayIndex - $scope.displayLimit;
+                    $scope.selectedDisplayIndex = newStartIndex > 0 ? newStartIndex : 0;
+
+                    updateSelectionViews();
                 };
 
-                $scope.pageDown = function(startIndex, limit) {
-                    var newStartIndex = startIndex + $scope.displayLimit;
-                    return newStartIndex < limit ? newStartIndex : limit - $scope.displayLimit - 1;
+                $scope.selectedPageDown = function() {
+                    var limit = $scope.selectedOptions.length;
+                    var newStartIndex = $scope.selectedDisplayIndex + $scope.displayLimit;
+                    $scope.selectedDisplayIndex = newStartIndex < limit ? newStartIndex : limit - $scope.displayLimit - 1;
+
+                    updateSelectionViews();
                 };
 
                 updateOptions();
@@ -329,20 +362,19 @@ angular.module("multiselect.html", []).run(["$templateCache", function($template
     "        </li>\n" +
     "        <li ng-show=\"(showSelectAll || showUnselectAll)\" class=\"divider\">\n" +
     "        </li>\n" +
-    "        \n" +
+    "\n" +
     "        <li ng-if=\"selectedOptions.length > displayLimit\" ng-class=\"{disabled: selectedDisplayIndex - displayLimit < 0}\">\n" +
-    "            <a href=\"\" ng-click=\"selectedDisplayIndex = pageUp(selectedDisplayIndex); $event.stopPropagation()\" class=\"text-center\">\n" +
+    "            <a href=\"\" ng-click=\"selectedPageUp(); $event.stopPropagation()\" class=\"text-center\">\n" +
     "                <span class=\"glyphicon glyphicon-chevron-up\"></span>\n" +
     "            </a>\n" +
     "        </li>\n" +
-    "        <li role=\"presentation\" ng-repeat=\"option in selectedOptions | limitTo : displayLimit : selectedDisplayIndex\" class=\"active\"\n" +
-    "            ng-if=\"selectionLimit && selectionLimit > 1\">\n" +
+    "        <li role=\"presentation\" ng-repeat=\"option in selectedOptionsView\" class=\"active\" ng-if=\"selectionLimit && selectionLimit > 1\">\n" +
     "            <a class=\"item-selected\" href=\"\" ng-click=\"toggleItem(option); $event.stopPropagation()\">\n" +
     "                <span class=\"glyphicon glyphicon-remove\"></span> {{getDisplay(option)}}\n" +
     "            </a>\n" +
     "        </li>\n" +
     "        <li ng-if=\"selectedOptions.length > displayLimit\" ng-class=\"{disabled: selectedDisplayIndex + displayLimit > selectedOptions.length}\">\n" +
-    "            <a href=\"\" ng-click=\"selectedDisplayIndex = pageDown(selectedDisplayIndex, selectedOptions.length); $event.stopPropagation()\" class=\"text-center\">\n" +
+    "            <a href=\"\" ng-click=\"selectedPageDown(); $event.stopPropagation()\" class=\"text-center\">\n" +
     "                <span class=\"glyphicon glyphicon-chevron-down\"></span>\n" +
     "            </a>\n" +
     "        </li>\n" +
@@ -350,25 +382,23 @@ angular.module("multiselect.html", []).run(["$templateCache", function($template
     "\n" +
     "        <li ng-show=\"showSearch\">\n" +
     "            <div class=\"dropdown-header\">\n" +
-    "                <input type=\"text\" class=\"form-control input-sm\" style=\"width: 100%;\" ng-model=\"searchFilter\" placeholder=\"Search...\" ng-change=\"updateOptions()\"\n" +
-    "                />\n" +
+    "                <input type=\"text\" class=\"form-control input-sm\" ng-model=\"searchFilter\" placeholder=\"Search...\" ng-change=\"update()\" />\n" +
     "            </div>\n" +
     "        </li>\n" +
     "\n" +
     "        <li ng-show=\"showSearch\" class=\"divider\"></li>\n" +
-    "        <li ng-if=\"unselectedOptions.length > displayLimit\" ng-class=\"{disabled: unselectedDisplayIndex - displayLimit < 0}\">\n" +
-    "            <a href=\"\" ng-click=\"unselectedDisplayIndex = pageUp(unselectedDisplayIndex); $event.stopPropagation()\" class=\"text-center\">\n" +
+    "        <li ng-if=\"unselectedOptionsFiltered.length > displayLimit\" ng-class=\"{disabled: unselectedDisplayIndex - displayLimit < 0}\">\n" +
+    "            <a href=\"\" ng-click=\"unselectedPageUp(); $event.stopPropagation()\" class=\"text-center\">\n" +
     "                <span class=\"glyphicon glyphicon-chevron-up\"></span>\n" +
     "            </a>\n" +
     "        </li>\n" +
-    "        <li role=\"presentation\" ng-repeat=\"option in unselectedOptions | filter:search() | limitTo: displayLimit : unselectedDisplayIndex\"\n" +
-    "            ng-if=\"!isSelected(option)\" ng-class=\"{disabled : selectionLimit && selectionLimit > 1 && selectedOptions.length >= selectionLimit}\">\n" +
+    "        <li role=\"presentation\" ng-repeat=\"option in unselectedOptionsView\" ng-class=\"{disabled : selectionLimit && selectionLimit > 1 && selectedOptions.length >= selectionLimit}\">\n" +
     "            <a class=\"item-unselected\" href=\"\" ng-click=\"toggleItem(option); $event.stopPropagation()\">\n" +
     "                {{getDisplay(option)}}\n" +
     "            </a>\n" +
     "        </li>\n" +
-    "        <li ng-if=\"unselectedOptions.length > displayLimit\" ng-class=\"{disabled: unselectedDisplayIndex + displayLimit > unselectedOptions.length}\">\n" +
-    "            <a href=\"\" ng-click=\"unselectedDisplayIndex = pageDown(unselectedDisplayIndex, unselectedOptions.length); $event.stopPropagation()\" class=\"text-center\">\n" +
+    "        <li ng-if=\"unselectedOptionsFiltered.length > displayLimit\" ng-class=\"{disabled: unselectedDisplayIndex + displayLimit > unselectedOptionsFiltered.length}\">\n" +
+    "            <a href=\"\" ng-click=\"unselectedPageDown(); $event.stopPropagation()\" class=\"text-center\">\n" +
     "                <span class=\"glyphicon glyphicon-chevron-down\"></span>\n" +
     "            </a>\n" +
     "        </li>\n" +

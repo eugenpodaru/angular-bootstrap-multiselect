@@ -20,20 +20,19 @@ angular.module("multiselect.html", []).run(["$templateCache", function($template
     "        </li>\n" +
     "        <li ng-show=\"(showSelectAll || showUnselectAll)\" class=\"divider\">\n" +
     "        </li>\n" +
-    "        \n" +
+    "\n" +
     "        <li ng-if=\"selectedOptions.length > displayLimit\" ng-class=\"{disabled: selectedDisplayIndex - displayLimit < 0}\">\n" +
-    "            <a href=\"\" ng-click=\"selectedDisplayIndex = pageUp(selectedDisplayIndex); $event.stopPropagation()\" class=\"text-center\">\n" +
+    "            <a href=\"\" ng-click=\"selectedPageUp(); $event.stopPropagation()\" class=\"text-center\">\n" +
     "                <span class=\"glyphicon glyphicon-chevron-up\"></span>\n" +
     "            </a>\n" +
     "        </li>\n" +
-    "        <li role=\"presentation\" ng-repeat=\"option in selectedOptions | limitTo : displayLimit : selectedDisplayIndex\" class=\"active\"\n" +
-    "            ng-if=\"selectionLimit && selectionLimit > 1\">\n" +
+    "        <li role=\"presentation\" ng-repeat=\"option in selectedOptionsView\" class=\"active\" ng-if=\"selectionLimit && selectionLimit > 1\">\n" +
     "            <a class=\"item-selected\" href=\"\" ng-click=\"toggleItem(option); $event.stopPropagation()\">\n" +
     "                <span class=\"glyphicon glyphicon-remove\"></span> {{getDisplay(option)}}\n" +
     "            </a>\n" +
     "        </li>\n" +
     "        <li ng-if=\"selectedOptions.length > displayLimit\" ng-class=\"{disabled: selectedDisplayIndex + displayLimit > selectedOptions.length}\">\n" +
-    "            <a href=\"\" ng-click=\"selectedDisplayIndex = pageDown(selectedDisplayIndex, selectedOptions.length); $event.stopPropagation()\" class=\"text-center\">\n" +
+    "            <a href=\"\" ng-click=\"selectedPageDown(); $event.stopPropagation()\" class=\"text-center\">\n" +
     "                <span class=\"glyphicon glyphicon-chevron-down\"></span>\n" +
     "            </a>\n" +
     "        </li>\n" +
@@ -41,25 +40,23 @@ angular.module("multiselect.html", []).run(["$templateCache", function($template
     "\n" +
     "        <li ng-show=\"showSearch\">\n" +
     "            <div class=\"dropdown-header\">\n" +
-    "                <input type=\"text\" class=\"form-control input-sm\" style=\"width: 100%;\" ng-model=\"searchFilter\" placeholder=\"Search...\" ng-change=\"updateOptions()\"\n" +
-    "                />\n" +
+    "                <input type=\"text\" class=\"form-control input-sm\" ng-model=\"searchFilter\" placeholder=\"Search...\" ng-change=\"update()\" />\n" +
     "            </div>\n" +
     "        </li>\n" +
     "\n" +
     "        <li ng-show=\"showSearch\" class=\"divider\"></li>\n" +
-    "        <li ng-if=\"unselectedOptions.length > displayLimit\" ng-class=\"{disabled: unselectedDisplayIndex - displayLimit < 0}\">\n" +
-    "            <a href=\"\" ng-click=\"unselectedDisplayIndex = pageUp(unselectedDisplayIndex); $event.stopPropagation()\" class=\"text-center\">\n" +
+    "        <li ng-if=\"unselectedOptionsFiltered.length > displayLimit\" ng-class=\"{disabled: unselectedDisplayIndex - displayLimit < 0}\">\n" +
+    "            <a href=\"\" ng-click=\"unselectedPageUp(); $event.stopPropagation()\" class=\"text-center\">\n" +
     "                <span class=\"glyphicon glyphicon-chevron-up\"></span>\n" +
     "            </a>\n" +
     "        </li>\n" +
-    "        <li role=\"presentation\" ng-repeat=\"option in unselectedOptions | filter:search() | limitTo: displayLimit : unselectedDisplayIndex\"\n" +
-    "            ng-if=\"!isSelected(option)\" ng-class=\"{disabled : selectionLimit && selectionLimit > 1 && selectedOptions.length >= selectionLimit}\">\n" +
+    "        <li role=\"presentation\" ng-repeat=\"option in unselectedOptionsView\" ng-class=\"{disabled : selectionLimit && selectionLimit > 1 && selectedOptions.length >= selectionLimit}\">\n" +
     "            <a class=\"item-unselected\" href=\"\" ng-click=\"toggleItem(option); $event.stopPropagation()\">\n" +
     "                {{getDisplay(option)}}\n" +
     "            </a>\n" +
     "        </li>\n" +
-    "        <li ng-if=\"unselectedOptions.length > displayLimit\" ng-class=\"{disabled: unselectedDisplayIndex + displayLimit > unselectedOptions.length}\">\n" +
-    "            <a href=\"\" ng-click=\"unselectedDisplayIndex = pageDown(unselectedDisplayIndex, unselectedOptions.length); $event.stopPropagation()\" class=\"text-center\">\n" +
+    "        <li ng-if=\"unselectedOptionsFiltered.length > displayLimit\" ng-class=\"{disabled: unselectedDisplayIndex + displayLimit > unselectedOptionsFiltered.length}\">\n" +
+    "            <a href=\"\" ng-click=\"unselectedPageDown(); $event.stopPropagation()\" class=\"text-center\">\n" +
     "                <span class=\"glyphicon glyphicon-chevron-down\"></span>\n" +
     "            </a>\n" +
     "        </li>\n" +
