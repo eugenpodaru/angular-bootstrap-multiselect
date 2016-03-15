@@ -188,13 +188,20 @@
                     }
                     var selectedIndex = $scope.selectedOptions.indexOf(item);
                     var currentlySelected = (selectedIndex !== -1);
-                    if (currentlySelected) {
+                    if (currentlySelected && $scope.selectionLimit > 1) {
                         $scope.unselectedOptions.push($scope.selectedOptions[selectedIndex]);
                         $scope.selectedOptions.splice(selectedIndex, 1);
                     } else if (!currentlySelected && ($scope.selectionLimit === 0 || $scope.selectedOptions.length < $scope.selectionLimit)) {
                         var unselectedIndex = $scope.unselectedOptions.indexOf(item);
                         $scope.unselectedOptions.splice(unselectedIndex, 1);
                         $scope.selectedOptions.push(item);
+                    } else if(!currentlySelected && $scope.selectionLimit === 1){
+                        var unselectedIndex = $scope.unselectedOptions.indexOf(item);
+                        $scope.unselectedOptions.splice(unselectedIndex, 1);
+                        $scope.selectedOptions.splice(0, 1);
+                        $scope.selectedOptions.push(item);
+                        
+                        closeHandler();
                     }
                 };
 
