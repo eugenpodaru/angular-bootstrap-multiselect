@@ -227,6 +227,13 @@
                     }
                 };
 
+                $scope.resolvedOptions = [];
+                if (typeof $scope.options !== 'function') {
+                    $scope.resolvedOptions = $scope.options;
+                } else {
+                    $scope.updateOptions();
+                }
+
             }
         };
     });
