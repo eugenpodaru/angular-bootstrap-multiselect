@@ -20,6 +20,7 @@
                 options: '=',
                 displayProp: '@',
                 idProp: '@',
+                bindId: '@',
                 searchLimit: '=?',
                 selectionLimit: '=?',
                 showSelectAll: '=?',
@@ -35,6 +36,7 @@
                 $scope.selectionLimit = $scope.selectionLimit || 0;
                 $scope.searchLimit = $scope.searchLimit || 25;
                 $scope.defaultText = $scope.defaultText || 'Select';
+                $scope.bindId = $scope.bindId || false;
 
                 $scope.searchFilter = '';
 
@@ -67,10 +69,19 @@
                     } else {
                         $scope.selectedOptions = $scope.resolvedOptions.filter(function(el) {
                             var id = $scope.getId(el);
-                            for (var i = 0; i < $ngModelCtrl.$viewValue.length; i++) {
-                                var selectedId = $scope.getId($ngModelCtrl.$viewValue[i]);
+                            var selectedId = undefined;
+                            if (angular.isString($ngModelCtrl.$viewValue) ||
+                                angular.isObject($ngModelCtrl.$viewValue)) {
+                                selectedId = $scope.getId($ngModelCtrl.$viewValue);
                                 if (id === selectedId) {
                                     return true;
+                                }
+                            } else if (angular.isArray($ngModelCtrl.$viewValue)) {
+                                for (var i = 0; i < $ngModelCtrl.$viewValue.length; i++) {
+                                    var selectedId = $scope.getId($ngModelCtrl.$viewValue[i]);
+                                    if (id === selectedId) {
+                                        return true;
+                                    }
                                 }
                             }
                             return false;
@@ -111,7 +122,23 @@
                 };
 
                 var selectedOptionsWatcher = $scope.$watch('selectedOptions', function() {
-                    $ngModelCtrl.$setViewValue(angular.copy($scope.selectedOptions));
+                    var viewValue = undefined;
+                    if ($scope.selectedOptions.length === 1) {
+                        if ($scope.bindId) {
+                            viewValue = $scope.getId($scope.selectedOptions[0]);
+                        } else {
+                            viewValue = $scope.selectedOptions[0];
+                        }
+                    } else if ($scope.selectedOptions.length > 1) {
+                        if ($scope.bindId) {
+                            viewValue = $scope.selectedOptions.map(function(el){
+                               return $scope.getId(el); 
+                            });
+                        } else {
+                            viewValue = angular.copy($scope.selectedOptions);
+                        }
+                    }
+                    $ngModelCtrl.$setViewValue(viewValue);
                 }, true);
 
                 var optionsWatcher = $scope.$watch('options', function() {
