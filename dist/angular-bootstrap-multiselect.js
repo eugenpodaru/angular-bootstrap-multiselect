@@ -124,7 +124,9 @@
                         $scope.selectedOptions = $scope.resolvedOptions.filter(function(el) {
                             var id = $scope.getId(el);
                             var selectedId = undefined;
-                            if (angular.isString($ngModelCtrl.$viewValue) ||
+                            if (angular.isNumber($ngModelCtrl.$viewValue) ||
+                                angular.isString($ngModelCtrl.$viewValue) ||
+                                angular.isDate($ngModelCtrl.$viewValue) ||
                                 angular.isObject($ngModelCtrl.$viewValue)) {
                                 selectedId = $scope.getId($ngModelCtrl.$viewValue);
                                 if (id === selectedId) {
@@ -275,9 +277,7 @@
                 };
 
                 $scope.getId = function(item) {
-                    if (angular.isString(item)) {
-                        return item;
-                    } else if (angular.isObject(item)) {
+                    if (angular.isObject(item)) {
                         if ($scope.idProp) {
                             return multiselect.getRecursiveProperty(item, $scope.idProp);
                         } else {
