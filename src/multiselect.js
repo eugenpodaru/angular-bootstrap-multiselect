@@ -115,9 +115,9 @@
                         updateSelectionLists();
                     }
                 };
-                
-                var updateViewValue = function(){
-                  var viewValue = undefined;
+
+                var updateViewValue = function() {
+                    var viewValue = undefined;
                     if ($scope.selectedOptions.length === 1) {
                         if ($scope.bindId) {
                             viewValue = $scope.getId($scope.selectedOptions[0]);
@@ -133,7 +133,7 @@
                             viewValue = angular.copy($scope.selectedOptions);
                         }
                     }
-                    $ngModelCtrl.$setViewValue(viewValue);  
+                    $ngModelCtrl.$setViewValue(viewValue);
                 };
 
                 $ngModelCtrl.$render = function() {
@@ -216,7 +216,7 @@
                         $scope.selectedOptions.splice(0, 1);
                         $scope.selectedOptions.push(item);
 
-                        closeHandler();
+                        $scope.toggleDropdown();
                     }
                 };
 
