@@ -113,7 +113,7 @@
                 var updateSelectionLists = function() {
                     if ($scope.resolvedOptions.length === 0)
                         return;
-                        
+
                     if (!$ngModelCtrl.$viewValue) {
                         $scope.selectedOptions = [];
                         // take a copy
@@ -195,12 +195,16 @@
                     }
                 };
 
-                var selectedOptionsWatcher = $scope.$watch('selectedOptions', function() {
-                    updateViewValue();
+                var selectedOptionsWatcher = $scope.$watch('selectedOptions', function(newValue, oldValue) {
+                    if (!angular.equals(newValue, oldValue)) {
+                        updateViewValue();
+                    }
                 }, true);
 
-                var optionsWatcher = $scope.$watch('options', function() {
-                    updateOptions();
+                var optionsWatcher = $scope.$watch('options', function(newValue, oldValue) {
+                    if (!angular.equals(newValue, oldValue)) {
+                        updateOptions();
+                    }
                 }, true);
 
                 $scope.$on('$destroy', function() {
