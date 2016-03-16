@@ -57,13 +57,6 @@
                 $scope.unselectedDisplayIndex = 0;
 
                 $scope.resolvedOptions = [];
-                $scope.selectedOptions = [];
-                $scope.unselectedOptions = [];
-
-                // initialize the views
-                $scope.selectedOptionsView = [];
-                $scope.unselectedOptionsFiltered = [];
-                $scope.unselectedOptionsView = [];
 
                 if (typeof $attrs.disabled != 'undefined') {
                     $scope.disabled = true;
