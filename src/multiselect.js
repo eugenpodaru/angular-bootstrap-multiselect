@@ -161,13 +161,13 @@
 
                 var updateViewValue = function() {
                     var viewValue = undefined;
-                    if ($scope.selectedOptions.length === 1) {
+                    if ($scope.selectionLimit === 1) {
                         if ($scope.bindId) {
                             viewValue = $scope.getId($scope.selectedOptions[0]);
                         } else {
                             viewValue = $scope.selectedOptions[0];
                         }
-                    } else if ($scope.selectedOptions.length > 1) {
+                    } else {
                         if ($scope.bindId) {
                             viewValue = $scope.selectedOptions.map(function(el) {
                                 return $scope.getId(el);
