@@ -17,7 +17,7 @@
         <li ng-show="(showSelectAll || showUnselectAll)" class="divider">
         </li>
 
-        <li ng-if="selectedOptions.length > displayLimit" ng-class="{disabled: selectedDisplayIndex - displayLimit < 0}">
+        <li ng-if="selectedOptions.length > selectedDisplayLimit" ng-class="{disabled: selectedDisplayIndex - selectedDisplayLimit < 0}">
             <a href="" ng-click="selectedPageUp(); $event.stopPropagation()" class="text-center">
                 <span class="glyphicon glyphicon-chevron-up"></span>
             </a>
@@ -27,7 +27,7 @@
                 <span class="glyphicon glyphicon-remove"></span> {{getDisplay(option)}}
             </a>
         </li>
-        <li ng-if="selectedOptions.length > displayLimit" ng-class="{disabled: selectedDisplayIndex + displayLimit > selectedOptions.length}">
+        <li ng-if="selectedOptions.length > selectedDisplayLimit" ng-class="{disabled: selectedDisplayIndex + selectedDisplayLimit > selectedOptions.length}">
             <a href="" ng-click="selectedPageDown(); $event.stopPropagation()" class="text-center">
                 <span class="glyphicon glyphicon-chevron-down"></span>
             </a>
@@ -41,7 +41,7 @@
         </li>
 
         <li ng-show="showSearch" class="divider"></li>
-        <li ng-if="unselectedOptionsFiltered.length > displayLimit" ng-class="{disabled: unselectedDisplayIndex - displayLimit < 0}">
+        <li ng-if="unselectedOptionsFiltered.length > unselectedDisplayLimit" ng-class="{disabled: unselectedDisplayIndex - unselectedDisplayLimit < 0}">
             <a href="" ng-click="unselectedPageUp(); $event.stopPropagation()" class="text-center">
                 <span class="glyphicon glyphicon-chevron-up"></span>
             </a>
@@ -51,7 +51,7 @@
                 {{getDisplay(option)}}
             </a>
         </li>
-        <li ng-if="unselectedOptionsFiltered.length > displayLimit" ng-class="{disabled: unselectedDisplayIndex + displayLimit > unselectedOptionsFiltered.length}">
+        <li ng-if="unselectedOptionsFiltered.length > unselectedDisplayLimit" ng-class="{disabled: unselectedDisplayIndex + unselectedDisplayLimit > unselectedOptionsFiltered.length}">
             <a href="" ng-click="unselectedPageDown(); $event.stopPropagation()" class="text-center">
                 <span class="glyphicon glyphicon-chevron-down"></span>
             </a>

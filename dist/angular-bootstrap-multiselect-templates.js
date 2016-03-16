@@ -21,7 +21,7 @@ angular.module("multiselect.html", []).run(["$templateCache", function($template
     "        <li ng-show=\"(showSelectAll || showUnselectAll)\" class=\"divider\">\n" +
     "        </li>\n" +
     "\n" +
-    "        <li ng-if=\"selectedOptions.length > displayLimit\" ng-class=\"{disabled: selectedDisplayIndex - displayLimit < 0}\">\n" +
+    "        <li ng-if=\"selectedOptions.length > selectedDisplayLimit\" ng-class=\"{disabled: selectedDisplayIndex - selectedDisplayLimit < 0}\">\n" +
     "            <a href=\"\" ng-click=\"selectedPageUp(); $event.stopPropagation()\" class=\"text-center\">\n" +
     "                <span class=\"glyphicon glyphicon-chevron-up\"></span>\n" +
     "            </a>\n" +
@@ -31,7 +31,7 @@ angular.module("multiselect.html", []).run(["$templateCache", function($template
     "                <span class=\"glyphicon glyphicon-remove\"></span> {{getDisplay(option)}}\n" +
     "            </a>\n" +
     "        </li>\n" +
-    "        <li ng-if=\"selectedOptions.length > displayLimit\" ng-class=\"{disabled: selectedDisplayIndex + displayLimit > selectedOptions.length}\">\n" +
+    "        <li ng-if=\"selectedOptions.length > selectedDisplayLimit\" ng-class=\"{disabled: selectedDisplayIndex + selectedDisplayLimit > selectedOptions.length}\">\n" +
     "            <a href=\"\" ng-click=\"selectedPageDown(); $event.stopPropagation()\" class=\"text-center\">\n" +
     "                <span class=\"glyphicon glyphicon-chevron-down\"></span>\n" +
     "            </a>\n" +
@@ -45,7 +45,7 @@ angular.module("multiselect.html", []).run(["$templateCache", function($template
     "        </li>\n" +
     "\n" +
     "        <li ng-show=\"showSearch\" class=\"divider\"></li>\n" +
-    "        <li ng-if=\"unselectedOptionsFiltered.length > displayLimit\" ng-class=\"{disabled: unselectedDisplayIndex - displayLimit < 0}\">\n" +
+    "        <li ng-if=\"unselectedOptionsFiltered.length > unselectedDisplayLimit\" ng-class=\"{disabled: unselectedDisplayIndex - unselectedDisplayLimit < 0}\">\n" +
     "            <a href=\"\" ng-click=\"unselectedPageUp(); $event.stopPropagation()\" class=\"text-center\">\n" +
     "                <span class=\"glyphicon glyphicon-chevron-up\"></span>\n" +
     "            </a>\n" +
@@ -55,7 +55,7 @@ angular.module("multiselect.html", []).run(["$templateCache", function($template
     "                {{getDisplay(option)}}\n" +
     "            </a>\n" +
     "        </li>\n" +
-    "        <li ng-if=\"unselectedOptionsFiltered.length > displayLimit\" ng-class=\"{disabled: unselectedDisplayIndex + displayLimit > unselectedOptionsFiltered.length}\">\n" +
+    "        <li ng-if=\"unselectedOptionsFiltered.length > unselectedDisplayLimit\" ng-class=\"{disabled: unselectedDisplayIndex + unselectedDisplayLimit > unselectedOptionsFiltered.length}\">\n" +
     "            <a href=\"\" ng-click=\"unselectedPageDown(); $event.stopPropagation()\" class=\"text-center\">\n" +
     "                <span class=\"glyphicon glyphicon-chevron-down\"></span>\n" +
     "            </a>\n" +
