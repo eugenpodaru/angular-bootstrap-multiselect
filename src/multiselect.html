@@ -24,7 +24,7 @@
         </li>
         <li role="presentation" ng-repeat="option in selectedOptionsView" class="active">
             <a class="item-selected" href="" ng-click="toggleItem(option); $event.stopPropagation()">
-                <span class="glyphicon glyphicon-remove"></span> {{getDisplay(option)}}
+                <span class="glyphicon glyphicon-remove" ng-if="selectionLimit !== 1"></span> {{getDisplay(option)}}
             </a>
         </li>
         <li ng-if="selectedOptions.length > selectedDisplayLimit" ng-class="{disabled: selectedDisplayIndex + selectedDisplayLimit > selectedOptions.length}">

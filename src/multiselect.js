@@ -256,7 +256,7 @@
                 $scope.toggleItem = function(item) {
                     var selectedIndex = $scope.selectedOptions.indexOf(item);
                     var currentlySelected = (selectedIndex !== -1);
-                    if (currentlySelected && $scope.selectionLimit > 1) {
+                    if (currentlySelected && ($scope.selectionLimit === 0 || $scope.selectionLimit > 1)) {
                         $scope.unselectedOptions.push($scope.selectedOptions[selectedIndex]);
                         $scope.selectedOptions.splice(selectedIndex, 1);
                     } else if (!currentlySelected && ($scope.selectionLimit === 0 || $scope.selectedOptions.length < $scope.selectionLimit)) {
