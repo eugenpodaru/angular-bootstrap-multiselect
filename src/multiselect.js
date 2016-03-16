@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-    var multiselect = angular.module('btorfs.multiselect', ['btorfs.multiselect.templates']);
+    var multiselect = angular.module('ui.multiselect', ['ui.multiselect.templates']);
 
     multiselect.getRecursiveProperty = function(object, path) {
         return path.split('.').reduce(function(object, x) {
@@ -13,7 +13,7 @@
         }, object)
     };
 
-    multiselect.directive('multiselect', function($filter, $document, $log) {
+    multiselect.directive('ui-multiselect', function($filter, $document, $log) {
         return {
             restrict: 'AE',
             scope: {

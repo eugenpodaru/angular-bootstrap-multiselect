@@ -6,7 +6,7 @@ describe("The multiselect directive, when using object models,", function () {
     var $rootScope;
     var $compile;
 
-    beforeEach(angular.mock.module('btorfs.multiselect'));
+    beforeEach(angular.mock.module('ui.multiselect'));
 
     beforeEach(inject(function (_$compile_, _$rootScope_) {
         $scope = _$rootScope_.$new();
@@ -29,7 +29,7 @@ describe("The multiselect directive, when using object models,", function () {
                 id: '3'
             }
         ];
-        var element = $compile("<multiselect ng-model='selection' id-prop='id' display-prop='name' options='options'></multiselect>")($scope);
+        var element = $compile("<ui-multiselect ng-model='selection' id-prop='id' display-prop='name' options='options'></ui-multiselect>")($scope);
         $scope.$digest();
         expect(element.isolateScope().selectedOptions).toBeUndefined();
 
@@ -53,7 +53,7 @@ describe("The multiselect directive, when using object models,", function () {
                 id: '3'
             }
         ];
-        var element = $compile("<multiselect ng-model='selection'  id-prop='id' display-prop='name' options='options'></multiselect>")($scope);
+        var element = $compile("<ui-multiselect ng-model='selection'  id-prop='id' display-prop='name' options='options'></ui-multiselect>")($scope);
         $scope.$digest();
 
         expect(element.isolateScope().unselectedOptions.length).toBe(3);
@@ -82,7 +82,7 @@ describe("The multiselect directive, when using object models,", function () {
                 id: '3'
             }
         ];
-        var element = $compile("<multiselect ng-model='selection'  id-prop='id' display-prop='name' options='options'></multiselect>")($scope);
+        var element = $compile("<ui-multiselect ng-model='selection'  id-prop='id' display-prop='name' options='options'></ui-multiselect>")($scope);
         $scope.$digest();
 
         expect(element.isolateScope().getButtonText()).toBe('Select');
@@ -106,7 +106,7 @@ describe("The multiselect directive, when using object models,", function () {
         $scope.selection = [{
             id: '1'
         }];
-        var element = $compile("<multiselect ng-model='selection'  id-prop='id' display-prop='name' options='options'></multiselect>")($scope);
+        var element = $compile("<ui-multiselect ng-model='selection'  id-prop='id' display-prop='name' options='options'></ui-multiselect>")($scope);
         $scope.$digest();
 
         expect(element.isolateScope().getButtonText()).toBe('el1');
@@ -132,7 +132,7 @@ describe("The multiselect directive, when using object models,", function () {
         }, {
             id: '2'
         }];
-        var element = $compile("<multiselect ng-model='selection'  id-prop='id' display-prop='name' options='options'></multiselect>")($scope);
+        var element = $compile("<ui-multiselect ng-model='selection'  id-prop='id' display-prop='name' options='options'></ui-multiselect>")($scope);
         $scope.$digest();
 
         expect(element.isolateScope().getButtonText()).toBe('2 selected');
@@ -154,7 +154,7 @@ describe("The multiselect directive, when using object models,", function () {
             }
         ];
         $scope.selection = [];
-        var element = $compile("<multiselect ng-model='selection'  id-prop='id' display-prop='name' options='options'></multiselect>")($scope);
+        var element = $compile("<ui-multiselect ng-model='selection'  id-prop='id' display-prop='name' options='options'></ui-multiselect>")($scope);
         $scope.$digest();
 
         element.isolateScope().selectAll();
@@ -188,7 +188,7 @@ describe("The multiselect directive, when using object models,", function () {
         $scope.selection = [{
             id: '2'
         }];
-        var element = $compile("<multiselect ng-model='selection'  id-prop='id' display-prop='name' options='options'></multiselect>")($scope);
+        var element = $compile("<ui-multiselect ng-model='selection'  id-prop='id' display-prop='name' options='options'></ui-multiselect>")($scope);
         $scope.$digest();
 
         expect(element.isolateScope().isSelected($scope.options[1])).toBeTruthy();
@@ -213,7 +213,7 @@ describe("The multiselect directive, when using object models,", function () {
         $scope.selection = [{
             id: '2'
         }];
-        var element = $compile("<multiselect ng-model='selection' id-prop='id' display-prop='name' options='options'></multiselect>")($scope);
+        var element = $compile("<ui-multiselect ng-model='selection' id-prop='id' display-prop='name' options='options'></ui-multiselect>")($scope);
         $scope.$digest();
 
         element.isolateScope().searchFilter = '2';

@@ -6,7 +6,7 @@ describe("The multiselect directive, when using string models,", function () {
     var $rootScope;
     var $compile;
 
-    beforeEach(angular.mock.module('btorfs.multiselect'));
+    beforeEach(angular.mock.module('ui.multiselect'));
 
     beforeEach(inject(function (_$compile_, _$rootScope_) {
         $scope = _$rootScope_.$new();
@@ -16,7 +16,7 @@ describe("The multiselect directive, when using string models,", function () {
 
     it('initializes the list lazily, when the first item is chosen', function () {
         $scope.options = ['el1', 'el2', 'el3'];
-        var element = $compile("<multiselect ng-model='selection' options='options'></multiselect>")($scope);
+        var element = $compile("<ui-multiselect ng-model='selection' options='options'></ui-multiselect>")($scope);
         $scope.$digest();
         expect(element.isolateScope().selectedOptions).toBeUndefined();
 
@@ -27,7 +27,7 @@ describe("The multiselect directive, when using string models,", function () {
 
     it('can toggle items in the selection', function () {
         $scope.options = ['el1', 'el2', 'el3'];
-        var element = $compile("<multiselect ng-model='selection' options='options'></multiselect>")($scope);
+        var element = $compile("<ui-multiselect ng-model='selection' options='options'></ui-multiselect>")($scope);
         $scope.$digest();
 
         expect(element.isolateScope().unselectedOptions.length).toBe(3);
@@ -43,7 +43,7 @@ describe("The multiselect directive, when using string models,", function () {
 
     it('shows a default label on the button when no items have been chosen', function () {
         $scope.options = ['el1', 'el2', 'el3'];
-        var element = $compile("<multiselect ng-model='selection' options='options'></multiselect>")($scope);
+        var element = $compile("<ui-multiselect ng-model='selection' options='options'></ui-multiselect>")($scope);
         $scope.$digest();
 
         expect(element.isolateScope().getButtonText()).toBe('Select');
@@ -51,7 +51,7 @@ describe("The multiselect directive, when using string models,", function () {
 
     it('shows a custom label on the button when no items have been chosen', function () {
         $scope.options = ['el1', 'el2', 'el3'];
-        var element = $compile("<multiselect ng-model='selection' options='options' default-text='dummy'></multiselect>")($scope);
+        var element = $compile("<ui-multiselect ng-model='selection' options='options' default-text='dummy'></ui-multiselect>")($scope);
         $scope.$digest();
 
         expect(element.isolateScope().getButtonText()).toBe('dummy');
@@ -60,7 +60,7 @@ describe("The multiselect directive, when using string models,", function () {
     it('shows the name of the element when one item is chosen', function () {
         $scope.options = ['el1', 'el2', 'el3'];
         $scope.selection = ['el1'];
-        var element = $compile("<multiselect ng-model='selection' options='options'></multiselect>")($scope);
+        var element = $compile("<ui-multiselect ng-model='selection' options='options'></ui-multiselect>")($scope);
         $scope.$digest();
 
         expect(element.isolateScope().getButtonText()).toBe('el1');
@@ -69,7 +69,7 @@ describe("The multiselect directive, when using string models,", function () {
     it('shows the number of elements when multiple items are chosen', function () {
         $scope.options = ['el1', 'el2', 'el3'];
         $scope.selection = ['el1', 'el2'];
-        var element = $compile("<multiselect ng-model='selection' options='options'></multiselect>")($scope);
+        var element = $compile("<ui-multiselect ng-model='selection' options='options'></ui-multiselect>")($scope);
         $scope.$digest();
 
         expect(element.isolateScope().getButtonText()).toBe('2 selected');
@@ -78,7 +78,7 @@ describe("The multiselect directive, when using string models,", function () {
     it('can select and unselect all at once', function () {
         $scope.options = ['el1', 'el2', 'el3'];
         $scope.selection = [];
-        var element = $compile("<multiselect ng-model='selection' options='options'></multiselect>")($scope);
+        var element = $compile("<ui-multiselect ng-model='selection' options='options'></ui-multiselect>")($scope);
         $scope.$digest();
 
         element.isolateScope().selectAll();
@@ -97,7 +97,7 @@ describe("The multiselect directive, when using string models,", function () {
     it('knows which items are selected', function () {
         $scope.options = ['el1', 'el2', 'el3'];
         $scope.selection = ['el2'];
-        var element = $compile("<multiselect ng-model='selection' options='options'></multiselect>")($scope);
+        var element = $compile("<ui-multiselect ng-model='selection' options='options'></ui-multiselect>")($scope);
         $scope.$digest();
 
         expect(element.isolateScope().isSelected($scope.options[1])).toBeTruthy();
@@ -107,7 +107,7 @@ describe("The multiselect directive, when using string models,", function () {
     it('can search inside the options', function () {
         $scope.options = ['el1', 'el2', 'el3'];
         $scope.selection = ['el2'];
-        var element = $compile("<multiselect ng-model='selection' options='options'></multiselect>")($scope);
+        var element = $compile("<ui-multiselect ng-model='selection' options='options'></ui-multiselect>")($scope);
         $scope.$digest();
 
         element.isolateScope().searchFilter = '2';

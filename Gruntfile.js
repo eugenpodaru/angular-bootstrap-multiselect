@@ -33,7 +33,7 @@ module.exports = function (grunt) {
                     singleQuotes: true
                 },
                 files: {
-                    'dist/angular-bootstrap-multiselect.js': 'dist/angular-bootstrap-multiselect.js'
+                    'dist/angular-ui-multiselect.js': 'dist/angular-ui-multiselect.js'
                 }
             }
         },
@@ -67,26 +67,26 @@ module.exports = function (grunt) {
         html2js: {
             options: {
                 base: 'src',
-                module: 'btorfs.multiselect.templates'
+                module: 'ui.multiselect.templates'
             },
             main: {
                 src: ['src/**/*.html'],
-                dest: 'dist/angular-bootstrap-multiselect-templates.js'
+                dest: 'dist/angular-ui-multiselect-templates.js'
             }
         },
 
         concat: {
             options: {},
             files: {
-                src: ['src/**/*.js', 'dist/angular-bootstrap-multiselect-templates.js'],
-                dest: 'dist/angular-bootstrap-multiselect.js'
+                src: ['src/**/*.js', 'dist/angular-ui-multiselect-templates.js'],
+                dest: 'dist/angular-ui-multiselect.js'
             }
         },
 
         uglify: {
             files: {
-                src: 'dist/angular-bootstrap-multiselect.js',
-                dest: 'dist/angular-bootstrap-multiselect.min.js'
+                src: 'dist/angular-ui-multiselect.js',
+                dest: 'dist/angular-ui-multiselect.min.js'
             }
         },
 

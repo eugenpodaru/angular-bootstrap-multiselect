@@ -1,4 +1,4 @@
-angular.module('btorfs.multiselect.templates', ['multiselect.html']);
+angular.module('ui.multiselect.templates', ['multiselect.html']);
 
 angular.module("multiselect.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("multiselect.html",

@@ -1,7 +1,7 @@
 {
-  "name": "angular-bootstrap-multiselect",
+  "name": "angular-ui-multiselect",
   "version": "1.1.5",
-  "main": "dist/angular-bootstrap-multiselect.min.js",
+  "main": "dist/angular-ui-multiselect.min.js",
   "ignore": [
     "src",
     "test",

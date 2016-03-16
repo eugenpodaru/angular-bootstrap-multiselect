@@ -4,7 +4,7 @@ module.exports = function (config) {
         files: [
             'bower_components/angular/angular.js',
             'bower_components/angular-mocks/angular-mocks.js',
-            'dist/angular-bootstrap-multiselect.min.js',
+            'dist/angular-ui-multiselect.min.js',
             'test/unit/*-test.js'
         ],
         browsers: ['PhantomJS'],
