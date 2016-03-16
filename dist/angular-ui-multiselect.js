@@ -13,7 +13,7 @@
         }, object)
     };
 
-    multiselect.directive('ui-multiselect', ['$filter', '$document', '$log', function($filter, $document, $log) {
+    multiselect.directive('uiMultiselect', ['$filter', '$document', '$log', function($filter, $document, $log) {
         return {
             restrict: 'AE',
             scope: {
