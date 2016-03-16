@@ -118,6 +118,9 @@
                 };
 
                 var updateSelectionLists = function() {
+                    if ($scope.resolvedOptions.length === 0)
+                        return;
+                        
                     if (!$ngModelCtrl.$viewValue) {
                         $scope.selectedOptions = [];
                         // take a copy
