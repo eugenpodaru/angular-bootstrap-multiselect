@@ -124,20 +124,17 @@
                         $scope.selectedOptions = $scope.resolvedOptions.filter(function(el) {
                             var id = $scope.getId(el);
                             var selectedId = undefined;
-                            if (angular.isNumber($ngModelCtrl.$viewValue) ||
-                                angular.isString($ngModelCtrl.$viewValue) ||
-                                angular.isDate($ngModelCtrl.$viewValue) ||
-                                angular.isObject($ngModelCtrl.$viewValue)) {
-                                selectedId = $scope.getId($ngModelCtrl.$viewValue);
-                                if (id === selectedId) {
-                                    return true;
-                                }
-                            } else if (angular.isArray($ngModelCtrl.$viewValue)) {
+                            if (angular.isArray($ngModelCtrl.$viewValue)) {
                                 for (var i = 0; i < $ngModelCtrl.$viewValue.length; i++) {
                                     var selectedId = $scope.getId($ngModelCtrl.$viewValue[i]);
                                     if (id === selectedId) {
                                         return true;
                                     }
+                                }
+                            } else {
+                                selectedId = $scope.getId($ngModelCtrl.$viewValue);
+                                if (id === selectedId) {
+                                    return true;
                                 }
                             }
                             return false;
@@ -290,9 +287,7 @@
                 };
 
                 $scope.getDisplay = function(item) {
-                    if (angular.isString(item)) {
-                        return item;
-                    } else if (angular.isObject(item)) {
+                    if (angular.isObject(item)) {
                         if ($scope.displayProp) {
                             return multiselect.getRecursiveProperty(item, $scope.displayProp);
                         } else {
