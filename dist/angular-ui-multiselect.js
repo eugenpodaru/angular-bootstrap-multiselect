@@ -377,13 +377,13 @@ angular.module("multiselect.html", []).run(["$templateCache", function($template
     "        </li>\n" +
     "        <li ng-show=\"selectedOptions.length > 0\" class=\"divider\"></li>\n" +
     "\n" +
-    "        <li ng-show=\"showSearch\">\n" +
+    "        <li ng-show=\"showSearch && unselectedOptions.length > 0\">\n" +
     "            <div class=\"dropdown-header\">\n" +
     "                <input type=\"text\" class=\"form-control input-sm\" ng-model=\"searchFilter\" placeholder=\"Search...\" ng-change=\"update()\" />\n" +
     "            </div>\n" +
     "        </li>\n" +
     "\n" +
-    "        <li ng-show=\"showSearch\" class=\"divider\"></li>\n" +
+    "        <li ng-show=\"showSearch && unselectedOptions.length > 0\" class=\"divider\"></li>\n" +
     "        <li ng-if=\"unselectedOptionsFiltered.length > unselectedDisplayLimit\" ng-class=\"{disabled: unselectedDisplayIndex - unselectedDisplayLimit < 0}\">\n" +
     "            <a href=\"\" ng-click=\"unselectedPageUp(); $event.stopPropagation()\" class=\"text-center\">\n" +
     "                <span class=\"glyphicon glyphicon-chevron-up\"></span>\n" +
@@ -404,7 +404,6 @@ angular.module("multiselect.html", []).run(["$templateCache", function($template
     "        <li role=\"presentation\" ng-show=\"selectionLimit > 1\">\n" +
     "            <a>{{selectedOptions.length || 0}} / {{selectionLimit}} selected</a>\n" +
     "        </li>\n" +
-    "\n" +
     "    </ul>\n" +
     "</div>");
 }]);
