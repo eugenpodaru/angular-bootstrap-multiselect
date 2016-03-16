@@ -22,7 +22,7 @@
                 <span class="glyphicon glyphicon-chevron-up"></span>
             </a>
         </li>
-        <li role="presentation" ng-repeat="option in selectedOptionsView" class="active" ng-if="selectionLimit && selectionLimit > 1">
+        <li role="presentation" ng-repeat="option in selectedOptionsView" class="active">
             <a class="item-selected" href="" ng-click="toggleItem(option); $event.stopPropagation()">
                 <span class="glyphicon glyphicon-remove"></span> {{getDisplay(option)}}
             </a>

@@ -26,7 +26,7 @@ angular.module("multiselect.html", []).run(["$templateCache", function($template
     "                <span class=\"glyphicon glyphicon-chevron-up\"></span>\n" +
     "            </a>\n" +
     "        </li>\n" +
-    "        <li role=\"presentation\" ng-repeat=\"option in selectedOptionsView\" class=\"active\" ng-if=\"selectionLimit && selectionLimit > 1\">\n" +
+    "        <li role=\"presentation\" ng-repeat=\"option in selectedOptionsView\" class=\"active\">\n" +
     "            <a class=\"item-selected\" href=\"\" ng-click=\"toggleItem(option); $event.stopPropagation()\">\n" +
     "                <span class=\"glyphicon glyphicon-remove\"></span> {{getDisplay(option)}}\n" +
     "            </a>\n" +
