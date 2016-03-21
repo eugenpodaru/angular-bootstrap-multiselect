@@ -1,0 +1,14 @@
+.multiselect-dropdown {
+    width: 300px;
+}
+
+.multiselect-dropdown > li > a {
+    -o-text-overflow: ellipsis;
+    -ms-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.multiselect-toggle {
+    width: 300px;
+}

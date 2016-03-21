@@ -1,65 +1,65 @@
-<div class="{{::containerClass}}">
-    <button type="button" class="{{::toggleClass}}" ng-click="toggleDropdown()" ng-disabled="disabled">
-        {{getButtonText()}}&nbsp;<span class="caret"></span>
+<div class="{{::vm.options.containerClass}}">
+    <button type="button" class="{{::vm.options.toggleClass}}" ng-click="vm.toggleDropdown()" ng-disabled="vm.options.disabled">
+        {{vm.getButtonText()}}&nbsp;<span class="caret"></span>
     </button>
-    <ul class="{{::dropdownClass}}" ng-style="{display: open ? 'block' : 'none'}">
+    <ul class="{{::vm.options.dropdownClass}}" ng-show="vm.open" style="display:block">
 
-        <li ng-show="showSelectAll">
-            <a ng-click="selectAll()" href="">
+        <li ng-show="vm.options.showSelectAll">
+            <a ng-click="vm.selectAll()" href="">
                 <span class="glyphicon glyphicon-ok"></span> Select All
             </a>
         </li>
-        <li ng-show="showUnselectAll">
-            <a ng-click="unselectAll()" href="">
+        <li ng-show="vm.options.showUnselectAll">
+            <a ng-click="vm.unselectAll()" href="">
                 <span class="glyphicon glyphicon-remove"></span> Unselect All
             </a>
         </li>
-        <li ng-show="(showSelectAll || showUnselectAll)" class="divider">
+        <li ng-show="(vm.options.showSelectAll || vm.options.showUnselectAll)" class="divider">
         </li>
 
-        <li ng-if="selectedOptions.length > selectedDisplayLimit" ng-class="{disabled: selectedDisplayIndex - selectedDisplayLimit < 0}">
-            <a href="" ng-click="selectedPageUp(); $event.stopPropagation()" class="text-center">
+        <li ng-if="vm.hasSelectedPageUp" ng-class="{disabled: !vm.canSelectedPageUp}">
+            <a href="" ng-click="vm.selectedPageUp(); $event.stopPropagation()" class="text-center">
                 <span class="glyphicon glyphicon-chevron-up"></span>
             </a>
         </li>
-        <li role="presentation" ng-repeat="option in selectedOptionsView" class="active">
-            <a class="item-selected" href="" ng-click="toggleItem(option); $event.stopPropagation()">
-                <span class="glyphicon glyphicon-remove" ng-if="selectionLimit !== 1"></span> {{getDisplay(option)}}
+        <li role="presentation" ng-repeat="item in vm.selectedItemsView" class="active">
+            <a class="item-selected" href="" ng-click="vm.toggleItem(item); $event.stopPropagation()">
+                <span class="glyphicon glyphicon-remove" ng-if="vm.options.selectionLimit !== 1"></span> {{vm.getDisplay(item)}}
             </a>
         </li>
-        <li ng-if="selectedOptions.length > selectedDisplayLimit" ng-class="{disabled: selectedDisplayIndex + selectedDisplayLimit > selectedOptions.length}">
-            <a href="" ng-click="selectedPageDown(); $event.stopPropagation()" class="text-center">
+        <li ng-if="vm.hasSelectedPageDown" ng-class="{disabled: !vm.canSelectedPageDown}">
+            <a href="" ng-click="vm.selectedPageDown(); $event.stopPropagation()" class="text-center">
                 <span class="glyphicon glyphicon-chevron-down"></span>
             </a>
         </li>
-        <li ng-show="selectedOptions.length > 0" class="divider"></li>
+        <li ng-show="vm.selectedItems.length > 0" class="divider"></li>
 
-        <li ng-show="showSearch && unselectedOptions.length > 0">
+        <li ng-show="vm.options.showSearch && vm.unselectedItems.length > 0">
             <div class="dropdown-header">
-                <input type="text" class="form-control input-sm" ng-model="searchFilter" placeholder="Search..." ng-change="update()" />
+                <input type="text" class="form-control input-sm" ng-model="vm.searchFilter" placeholder="Search..." ng-change="vm.update()" />
             </div>
         </li>
-
-        <li ng-show="showSearch && unselectedOptions.length > 0" class="divider"></li>
-        <li ng-if="unselectedOptionsFiltered.length > unselectedDisplayLimit" ng-class="{disabled: unselectedDisplayIndex - unselectedDisplayLimit < 0}">
-            <a href="" ng-click="unselectedPageUp(); $event.stopPropagation()" class="text-center">
+        <li ng-show="vm.options.showSearch && vm.unselectedItems.length > 0" class="divider"></li>
+        
+        <li ng-if="vm.hasUnselectedPageUp" ng-class="{disabled: !vm.canUnselectedPageUp}">
+            <a href="" ng-click="vm.unselectedPageUp(); $event.stopPropagation()" class="text-center">
                 <span class="glyphicon glyphicon-chevron-up"></span>
             </a>
         </li>
-        <li role="presentation" ng-repeat="option in unselectedOptionsView" ng-class="{disabled : selectionLimit && selectionLimit > 1 && selectedOptions.length >= selectionLimit}">
-            <a class="item-unselected" href="" ng-click="toggleItem(option); $event.stopPropagation()">
-                {{getDisplay(option)}}
+        <li role="presentation" ng-repeat="item in vm.unselectedItemsView" ng-class="{disabled : !vm.canSelectItem}">
+            <a class="item-unselected" href="" ng-click="vm.toggleItem(item); $event.stopPropagation()">
+                {{vm.getDisplay(item)}}
             </a>
         </li>
-        <li ng-if="unselectedOptionsFiltered.length > unselectedDisplayLimit" ng-class="{disabled: unselectedDisplayIndex + unselectedDisplayLimit > unselectedOptionsFiltered.length}">
-            <a href="" ng-click="unselectedPageDown(); $event.stopPropagation()" class="text-center">
+        <li ng-if="vm.hasUnselectedPageDown" ng-class="{disabled: !vm.canUnselectedPageDown}">
+            <a href="" ng-click="vm.unselectedPageDown(); $event.stopPropagation()" class="text-center">
                 <span class="glyphicon glyphicon-chevron-down"></span>
             </a>
         </li>
 
-        <li class="divider" ng-show="selectionLimit > 1"></li>
-        <li role="presentation" ng-show="selectionLimit > 1">
-            <a>{{selectedOptions.length || 0}} / {{selectionLimit}} selected</a>
+        <li class="divider" ng-show="vm.options.selectionLimit > 1"></li>
+        <li role="presentation" ng-show="vm.options.selectionLimit > 1">
+            <a>{{vm.selectedItems.length || 0}} / {{vm.options.selectionLimit}} selected</a>
         </li>
     </ul>
 </div>

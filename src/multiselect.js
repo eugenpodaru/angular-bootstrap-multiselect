@@ -1,338 +1,364 @@
 (function() {
-    'use strict';
+    "use strict";
 
-    var multiselect = angular.module('ui.multiselect', ['ui.multiselect.templates']);
-
-    multiselect.getRecursiveProperty = function(object, path) {
-        return path.split('.').reduce(function(object, x) {
-            if (object) {
-                return object[x];
-            } else {
-                return null;
-            }
-        }, object)
-    };
-
-    multiselect.directive('uiMultiselect', function($filter, $document, $log) {
-        return {
-            restrict: 'AE',
-            scope: {
-                options: '=',
-                displayProp: '@',
-                idProp: '@',
-                bindId: '@',
-                searchLimit: '=?',
-                selectionLimit: '=?',
-                selectedDisplayLimit: '=?',
-                unselectedDisplayLimit: '=?',
-                showSelectAll: '=?',
-                showUnselectAll: '=?',
-                showSearch: '=?',
-                searchFilter: '=?',
-                disabled: '=?ngDisabled',
-                defaultText: '@',
-                containerClass: '@',
-                toggleClass: '@',
-                dropdownClass: '@'
+    angular
+        .module("ui.multiselect", ["ui.multiselect.templates"])
+        .component("uiMultiselect", {
+            restrict: "AE",
+            controller: uiMultiselectController,
+            controllerAs: "vm",
+            templateUrl: "multiselect.html",
+            bindings: {
+                items: "=",
+                options: "="
             },
-            require: 'ngModel',
-            templateUrl: 'multiselect.html',
-            link: function($scope, $element, $attrs, $ngModelCtrl) {
-                $scope.selectionLimit = $scope.selectionLimit || 0;
-                $scope.searchLimit = $scope.searchLimit || 25;
-                $scope.selectedDisplayLimit = $scope.selectedDisplayLimit || 5;
-                $scope.unselectedDisplayLimit = $scope.unselectedDisplayLimit || 10;
-                $scope.defaultText = $scope.defaultText || 'Select';
-                $scope.bindId = $scope.bindId || false;
+            require: {
+                ngModel: "ngModel"
+            }
+        });
 
-                // custom classes
-                $scope.containerClass = $scope.containerClass || 'btn-group';
-                $scope.toggleClass = $scope.toggleClass || 'form-control dropdown-toggle btn btn-default btn-block';
-                $scope.dropdownClass = $scope.dropdownClass || 'dropdown-menu dropdown-menu-form';
+    uiMultiselectController.$inject = ["$scope", "$element", "$document", "$filter"];
 
-                $scope.searchFilter = '';
+    function uiMultiselectController($scope, $element, $document, $filter) {
+        var vm = this;
 
-                // initialize the display indexes
-                $scope.selectedDisplayIndex = 0;
-                $scope.unselectedDisplayIndex = 0;
+        vm.$onInit = function() {
+            var options = vm.options || {};
 
-                $scope.resolvedOptions = [];
+            options.selectionLimit = options.selectionLimit || 0;
+            options.searchLimit = options.searchLimit || 25;
+            options.selectedDisplayLimit = options.selectedDisplayLimit || 5;
+            options.unselectedDisplayLimit = options.unselectedDisplayLimit || 10;
+            options.defaultText = options.defaultText || "Select";
+            options.bindId = options.bindId || false;
 
-                if (typeof $attrs.disabled != 'undefined') {
-                    $scope.disabled = true;
-                }
+            // custom classes
+            options.containerClass = options.containerClass || "btn-group";
+            options.toggleClass = options.toggleClass || "form-control dropdown-toggle btn btn-default btn-block";
+            options.dropdownClass = options.dropdownClass || "dropdown-menu";
 
-                $scope.toggleDropdown = function() {
-                    $scope.open = !$scope.open;
-                };
+            options.disabled = options.disabled || false;
 
-                var closeHandler = function(event) {
-                    if (!$element[0].contains(event.target)) {
-                        $scope.$apply(function() {
-                            $scope.open = false;
-                        });
-                    }
-                };
+            vm.options = options;
 
-                $document.on('click', closeHandler);
+            vm.searchFilter = "";
 
-                // This search function is optimized to take into account the search limit.
-                // Using angular limitTo filter is not efficient for big lists, because it still runs the search for
-                // all elements, even if the limit is reached
-                var search = function() {
-                    var counter = 0;
-                    return function(item) {
-                        if (counter > $scope.searchLimit) {
-                            return false;
-                        }
-                        var displayName = $scope.getDisplay(item);
-                        if (displayName) {
-                            var result = displayName.toLowerCase().indexOf($scope.searchFilter.toLowerCase()) > -1;
-                            if (result) {
-                                counter++;
-                            }
-                            return result;
-                        }
-                    }
-                };
+            // initialize the display indexes
+            vm.selectedDisplayIndex = 0;
+            vm.unselectedDisplayIndex = 0;
 
-                var updateSelectionViews = function(reset) {
-                    if (reset) {
-                        $scope.selectedDisplayIndex = 0;
-                        $scope.unselectedDisplayIndex = 0;
-                    }
+            vm.resolvedItems = [];
 
-                    $scope.selectedOptionsView = $scope.selectedOptions.slice($scope.selectedDisplayIndex,
-                        $scope.selectedDisplayIndex + $scope.selectedDisplayLimit);
+            $document.on("click", closeHandler);
 
-                    $scope.unselectedOptionsFiltered = $filter('filter')($scope.unselectedOptions, search());
-                    $scope.unselectedOptionsView = $scope.unselectedOptionsFiltered.slice($scope.unselectedDisplayIndex,
-                        $scope.unselectedDisplayIndex + $scope.unselectedDisplayLimit);
-                };
+            vm.ngModel.$render = updateSelectionLists;
+            vm.ngModel.$viewChangeListeners.push(updateSelectionLists);
+            vm.ngModel.$isEmpty = isValueEmpty;
 
-                var updateSelectionLists = function() {
-                    if ($scope.resolvedOptions.length === 0)
-                        return;
+            vm.selectedItemsWatcher = $scope.$watch("selectedItems", onSelectedItemsChanged, true);
+            vm.itemsWatcher = $scope.$watch("items", onItemsChanged, true);
 
-                    if (!$ngModelCtrl.$viewValue) {
-                        $scope.selectedOptions = [];
-                        // take a copy
-                        $scope.unselectedOptions = $scope.resolvedOptions.slice();
-                    } else {
-                        $scope.selectedOptions = $scope.resolvedOptions.filter(function(el) {
-                            var id = $scope.getId(el);
-                            var selectedId = undefined;
-                            if (angular.isArray($ngModelCtrl.$viewValue)) {
-                                for (var i = 0; i < $ngModelCtrl.$viewValue.length; i++) {
-                                    var selectedId = $scope.getId($ngModelCtrl.$viewValue[i]);
-                                    if (id === selectedId) {
-                                        return true;
-                                    }
-                                }
-                            } else {
-                                selectedId = $scope.getId($ngModelCtrl.$viewValue);
-                                if (id === selectedId) {
-                                    return true;
-                                }
-                            }
-                            return false;
-                        });
+            vm.toggleDropdown = toggleDropdown;
+            vm.toggleItem = toggleItem;
+            vm.getButtonText = getButtonText;
+            vm.getId = getId;
+            vm.getDisplay = getDisplay;
+            vm.update = update;
+            vm.selectAll = selectAll;
+            vm.unselectAll = unselectAll;
+            vm.unselectedPageUp = unselectedPageUp;
+            vm.unselectedPageDown = unselectedPageDown;
+            vm.selectedPageUp = selectedPageUp;
+            vm.selectedPageDown = selectedPageDown;
 
-                        $scope.unselectedOptions = $scope.resolvedOptions.filter(function(el) {
-                            return $scope.selectedOptions.indexOf(el) < 0;
-                        });
-                    }
+            updateItems();
+        };
 
-                    updateSelectionViews(true);
-                };
+        vm.$onDestroy = function() {
+            $document.off("click", closeHandler);
 
-                var updateOptions = function() {
-                    $scope.resolvedOptions = [];
-                    if (typeof $scope.options === 'function') {
-                        $scope.options().then(function(resolvedOptions) {
-                            $scope.resolvedOptions = resolvedOptions;
-                            updateSelectionLists();
-                        });
-                    } else {
-                        $scope.resolvedOptions = $scope.options;
-                        updateSelectionLists();
-                    }
-                };
-
-                var updateViewValue = function() {
-                    var viewValue = undefined;
-                    if ($scope.selectionLimit === 1) {
-                        if ($scope.bindId) {
-                            viewValue = $scope.getId($scope.selectedOptions[0]);
-                        } else {
-                            viewValue = $scope.selectedOptions[0];
-                        }
-                    } else {
-                        if ($scope.bindId) {
-                            viewValue = $scope.selectedOptions.map(function(el) {
-                                return $scope.getId(el);
-                            });
-                        } else {
-                            viewValue = angular.copy($scope.selectedOptions);
-                        }
-                    }
-                    $ngModelCtrl.$setViewValue(viewValue);
-                };
-
-                $ngModelCtrl.$render = function() {
-                    updateSelectionLists();
-                };
-
-                $ngModelCtrl.$viewChangeListeners.push(function() {
-                    updateSelectionLists();
-                });
-
-                $ngModelCtrl.$isEmpty = function(value) {
-                    if (value) {
-                        return (value.length === 0);
-                    } else {
-                        return true;
-                    }
-                };
-
-                var selectedOptionsWatcher = $scope.$watch('selectedOptions', function(newValue, oldValue) {
-                    if (!angular.equals(newValue, oldValue)) {
-                        updateViewValue();
-                    }
-                }, true);
-
-                var optionsWatcher = $scope.$watch('options', function(newValue, oldValue) {
-                    if (!angular.equals(newValue, oldValue)) {
-                        updateOptions();
-                    }
-                }, true);
-
-                $scope.$on('$destroy', function() {
-                    $document.off('click', closeHandler);
-                    if (selectedOptionsWatcher) {
-                        // clean watcher
-                        selectedOptionsWatcher();
-                    }
-                    if (optionsWatcher) {
-                        optionsWatcher();
-                    }
-                });
-
-                $scope.getButtonText = function() {
-                    if ($scope.selectedOptions && $scope.selectedOptions.length === 1) {
-                        return $scope.getDisplay($scope.selectedOptions[0]);
-                    }
-                    if ($scope.selectedOptions && $scope.selectedOptions.length > 1) {
-                        var totalSelected;
-                        totalSelected = angular.isDefined($scope.selectedOptions) ? $scope.selectedOptions.length : 0;
-                        if (totalSelected === 0) {
-                            return $scope.defaultText;
-                        } else {
-                            return totalSelected + ' ' + 'selected';
-                        }
-                    } else {
-                        return $scope.defaultText;
-                    }
-                };
-
-                $scope.update = function() {
-                    updateSelectionViews(true);
-                };
-
-                $scope.selectAll = function() {
-                    $scope.selectedOptions = $scope.resolvedOptions.slice();
-                    $scope.unselectedOptions = [];
-
-                    updateSelectionViews(true);
-                };
-
-                $scope.unselectAll = function() {
-                    $scope.selectedOptions = [];
-                    $scope.unselectedOptions = $scope.resolvedOptions.slice();
-
-                    updateSelectionViews(true);
-                };
-
-                $scope.toggleItem = function(item) {
-                    var selectedIndex = $scope.selectedOptions.indexOf(item);
-                    var currentlySelected = (selectedIndex !== -1);
-                    if (currentlySelected && ($scope.selectionLimit === 0 || $scope.selectionLimit > 1)) {
-                        $scope.unselectedOptions.push($scope.selectedOptions[selectedIndex]);
-                        $scope.selectedOptions.splice(selectedIndex, 1);
-                    } else if (!currentlySelected && ($scope.selectionLimit === 0 || $scope.selectedOptions.length < $scope.selectionLimit)) {
-                        var unselectedIndex = $scope.unselectedOptions.indexOf(item);
-                        $scope.unselectedOptions.splice(unselectedIndex, 1);
-                        $scope.selectedOptions.push(item);
-                    } else if (!currentlySelected && $scope.selectionLimit === 1) {
-                        var unselectedIndex = $scope.unselectedOptions.indexOf(item);
-                        $scope.unselectedOptions.splice(unselectedIndex, 1);
-                        $scope.selectedOptions.splice(0, 1);
-                        $scope.selectedOptions.push(item);
-
-                        $scope.toggleDropdown();
-                    }
-
-                    updateSelectionViews();
-                };
-
-                $scope.getId = function(item) {
-                    if (angular.isObject(item)) {
-                        if ($scope.idProp) {
-                            return multiselect.getRecursiveProperty(item, $scope.idProp);
-                        } else {
-                            $log.error('Multiselect: when using objects as model, a idProp value is mandatory.');
-                            return '';
-                        }
-                    } else {
-                        return item;
-                    }
-                };
-
-                $scope.getDisplay = function(item) {
-                    if (angular.isObject(item)) {
-                        if ($scope.displayProp) {
-                            return multiselect.getRecursiveProperty(item, $scope.displayProp);
-                        } else {
-                            $log.error('Multiselect: when using objects as model, a displayProp value is mandatory.');
-                            return '';
-                        }
-                    } else {
-                        return item;
-                    }
-                };
-
-                $scope.unselectedPageUp = function() {
-                    var newStartIndex = $scope.unselectedDisplayIndex - $scope.unselectedDisplayLimit;
-                    $scope.unselectedDisplayIndex = newStartIndex > 0 ? newStartIndex : 0;
-
-                    updateSelectionViews();
-                };
-
-                $scope.unselectedPageDown = function() {
-                    var limit = $scope.unselectedOptionsFiltered.length;
-                    var newStartIndex = $scope.unselectedDisplayIndex + $scope.unselectedDisplayLimit;
-                    $scope.unselectedDisplayIndex = newStartIndex < limit ? newStartIndex : limit - $scope.unselectedDisplayLimit - 1;
-
-                    updateSelectionViews();
-                };
-
-                $scope.selectedPageUp = function() {
-                    var newStartIndex = $scope.selectedDisplayIndex - $scope.selectedDisplayLimit;
-                    $scope.selectedDisplayIndex = newStartIndex > 0 ? newStartIndex : 0;
-
-                    updateSelectionViews();
-                };
-
-                $scope.selectedPageDown = function() {
-                    var limit = $scope.selectedOptions.length;
-                    var newStartIndex = $scope.selectedDisplayIndex + $scope.selectedDisplayLimit;
-                    $scope.selectedDisplayIndex = newStartIndex < limit ? newStartIndex : limit - $scope.selectedDisplayLimit - 1;
-
-                    updateSelectionViews();
-                };
-
-                updateOptions();
+            if (vm.selectedItemsWatcher) {
+                vm.selectedItemsWatcher();
+            }
+            if (vm.itemsWatcher) {
+                vm.itemsWatcher();
             }
         };
-    });
+
+        var toggleDropdown = function() {
+            vm.open = !vm.open;
+        };
+
+        var closeHandler = function(event) {
+            if (!$element[0].contains(event.target)) {
+                $scope.$apply(function() {
+                    vm.open = false;
+                });
+            }
+        };
+
+        var isValueEmpty = function(value) {
+            if (value && angular.isArray(value)) {
+                return (value.length === 0);
+            } else {
+                return !!value;
+            }
+        };
+
+        // This search function is optimized to take into account the search limit.
+        // Using angular limitTo filter is not efficient for big lists, because it still runs the search for
+        // all elements, even if the limit is reached
+        var search = function() {
+            var counter = 0;
+            return function(item) {
+                if (counter > vm.options.searchLimit) {
+                    return false;
+                }
+                var displayName = vm.getDisplay(item);
+                if (displayName) {
+                    var result = displayName.toLowerCase().indexOf(vm.searchFilter.toLowerCase()) > -1;
+                    if (result) {
+                        counter++;
+                    }
+                    return result;
+                }
+            }
+        };
+
+        var updateSelectionViews = function(reset) {
+            if (reset) {
+                vm.selectedDisplayIndex = 0;
+                vm.unselectedDisplayIndex = 0;
+            }
+
+            vm.selectedItemsView = vm.selectedItems.slice(vm.selectedDisplayIndex,
+                vm.selectedDisplayIndex + vm.options.selectedDisplayLimit);
+
+            vm.unselectedItemsFiltered = $filter("filter")(vm.unselectedItems, search());
+            vm.unselectedItemsView = vm.unselectedItemsFiltered.slice(vm.unselectedDisplayIndex,
+                vm.unselectedDisplayIndex + vm.options.unselectedDisplayLimit);
+
+            updateCapabilities();
+        };
+
+        var updateCapabilities = function() {
+            vm.hasUnselectedPageDown = vm.unselectedItemsFiltered.length > vm.options.unselectedDisplayLimit;
+            vm.canUnselectedPageDown = vm.unselectedDisplayIndex + vm.options.unselectedDisplayLimit < vm.unselectedItemsFiltered.length;
+
+            vm.hasUnselectedPageUp = vm.unselectedItemsFiltered.length > vm.options.unselectedDisplayLimit;
+            vm.canUnselectedPageUp = vm.unselectedDisplayIndex > 0;
+
+            vm.hasSelectedPageDown = vm.selectedItems.length > vm.options.selectedDisplayLimit;
+            vm.canSelectedPageDown = vm.selectedDisplayIndex + vm.options.selectedDisplayLimit < vm.selectedItems.length;
+
+            vm.hasSelectedPageUp = vm.selectedItems.length > vm.options.selectedDisplayLimit;
+            vm.canSelectedPageUp = vm.selectedDisplayIndex > 0;
+
+            vm.canSelectItem = !(vm.options.selectionLimit && vm.options.selectionLimit > 1 && vm.selectedItems.length >= vm.options.selectionLimit);
+        };
+
+        var updateSelectionLists = function() {
+            if (vm.resolvedItems.length === 0)
+                return;
+
+            if (!vm.ngModel.$viewValue) {
+                vm.selectedItems = [];
+                // take a copy
+                vm.unselectedItems = vm.resolvedItems.slice();
+            } else {
+                vm.selectedItems = vm.resolvedItems.filter(function(el) {
+                    var id = vm.getId(el);
+                    var selectedId = undefined;
+                    if (angular.isArray(vm.ngModel.$viewValue)) {
+                        for (var i = 0; i < vm.ngModel.$viewValue.length; i++) {
+                            var selectedId = vm.getId(vm.ngModel.$viewValue[i]);
+                            if (id === selectedId) {
+                                return true;
+                            }
+                        }
+                    } else {
+                        selectedId = vm.getId(vm.ngModel.$viewValue);
+                        if (id === selectedId) {
+                            return true;
+                        }
+                    }
+                    return false;
+                });
+
+                vm.unselectedItems = vm.resolvedItems.filter(function(el) {
+                    return vm.selectedItems.indexOf(el) < 0;
+                });
+            }
+
+            updateSelectionViews(true);
+        };
+
+        var updateItems = function() {
+            vm.resolvedItems = [];
+            if (typeof vm.items === "function") {
+                vm.items().then(function(resolvedItems) {
+                    vm.resolvedItems = resolvedItems;
+                    updateSelectionLists();
+                });
+            } else {
+                vm.resolvedItems = vm.items;
+                updateSelectionLists();
+            }
+        };
+
+        var updateViewValue = function() {
+            var viewValue = undefined;
+            if (vm.options.selectionLimit === 1) {
+                if (vm.options.bindId) {
+                    viewValue = vm.getId(vm.selectedItems[0]);
+                } else {
+                    viewValue = vm.selectedItems[0];
+                }
+            } else {
+                if (vm.options.bindId) {
+                    viewValue = vm.selectedItems.map(function(el) {
+                        return vm.getId(el);
+                    });
+                } else {
+                    viewValue = angular.copy(vm.selectedItems);
+                }
+            }
+            vm.ngModel.$setViewValue(viewValue);
+        };
+
+        var onSelectedItemsChanged = function(newValue, oldValue) {
+            if (!angular.equals(newValue, oldValue)) {
+                updateViewValue();
+            }
+        };
+
+        var onItemsChanged = function(newValue, oldValue) {
+            if (!angular.equals(newValue, oldValue)) {
+                updateItems();
+            }
+        };
+
+        var getButtonText = function() {
+            if (vm.selectedItems && vm.selectedItems.length === 1) {
+                return vm.getDisplay(vm.selectedItems[0]);
+            }
+            if (vm.selectedItems && vm.selectedItems.length > 1) {
+                var totalSelected;
+                totalSelected = angular.isDefined(vm.selectedItems) ? vm.selectedItems.length : 0;
+                if (totalSelected === 0) {
+                    return vm.options.defaultText;
+                } else {
+                    return totalSelected + " " + "selected";
+                }
+            } else {
+                return vm.options.defaultText;
+            }
+        };
+
+        var update = function() {
+            updateSelectionViews(true);
+        };
+
+        var selectAll = function() {
+            vm.selectedItems = vm.resolvedItems.slice();
+            vm.unselectedItems = [];
+
+            updateSelectionViews(true);
+        };
+
+        var unselectAll = function() {
+            vm.selectedItems = [];
+            vm.unselectedItems = vm.resolvedItems.slice();
+
+            updateSelectionViews(true);
+        };
+
+        var toggleItem = function(item) {
+            var selectedIndex = vm.selectedItems.indexOf(item);
+            var currentlySelected = (selectedIndex !== -1);
+            if (currentlySelected && (vm.options.selectionLimit === 0 || vm.options.selectionLimit > 1)) {
+                vm.unselectedItems.push(vm.selectedItems[selectedIndex]);
+                vm.selectedItems.splice(selectedIndex, 1);
+            } else if (!currentlySelected && (vm.options.selectionLimit === 0 || vm.selectedItems.length < vm.options.selectionLimit)) {
+                var unselectedIndex = vm.unselectedItems.indexOf(item);
+                vm.unselectedItems.splice(unselectedIndex, 1);
+                vm.selectedItems.push(item);
+            } else if (!currentlySelected && vm.options.selectionLimit === 1) {
+                var unselectedIndex = vm.unselectedItems.indexOf(item);
+                vm.unselectedItems.splice(unselectedIndex, 1);
+                vm.selectedItems.splice(0, 1);
+                vm.selectedItems.push(item);
+
+                vm.toggleDropdown();
+            }
+
+            updateSelectionViews();
+        };
+
+        var getId = function(item) {
+            if (angular.isObject(item)) {
+                if (vm.options.idProp) {
+                    return getRecursiveProperty(item, vm.options.idProp);
+                } else {
+                    $log.error("Multiselect: when using objects as model, a idProp value is mandatory.");
+                    return "";
+                }
+            } else {
+                return item;
+            }
+        };
+
+        var getDisplay = function(item) {
+            if (angular.isObject(item)) {
+                if (vm.options.displayProp) {
+                    return getRecursiveProperty(item, vm.options.displayProp);
+                } else {
+                    $log.error("Multiselect: when using objects as model, a displayProp value is mandatory.");
+                    return "";
+                }
+            } else {
+                return item;
+            }
+        };
+
+        var unselectedPageUp = function() {
+            var newStartIndex = vm.unselectedDisplayIndex - vm.options.unselectedDisplayLimit;
+            vm.unselectedDisplayIndex = newStartIndex > 0 ? newStartIndex : 0;
+
+            updateSelectionViews();
+        };
+
+        var unselectedPageDown = function() {
+            var limit = vm.unselectedItemsFiltered.length;
+            var newStartIndex = vm.unselectedDisplayIndex + vm.options.unselectedDisplayLimit;
+            vm.unselectedDisplayIndex = newStartIndex < limit ? newStartIndex : limit - vm.options.unselectedDisplayLimit - 1;
+
+            updateSelectionViews();
+        };
+
+        var selectedPageUp = function() {
+            var newStartIndex = vm.selectedDisplayIndex - vm.options.selectedDisplayLimit;
+            vm.selectedDisplayIndex = newStartIndex > 0 ? newStartIndex : 0;
+
+            updateSelectionViews();
+        };
+
+        var selectedPageDown = function() {
+            var limit = vm.selectedItems.length;
+            var newStartIndex = vm.selectedDisplayIndex + vm.options.selectedDisplayLimit;
+            vm.selectedDisplayIndex = newStartIndex < limit ? newStartIndex : limit - vm.options.selectedDisplayLimit - 1;
+
+            updateSelectionViews();
+        };
+
+        var getRecursiveProperty = function(object, path) {
+            return path.split(".").reduce(function(object, x) {
+                if (object) {
+                    return object[x];
+                } else {
+                    return null;
+                }
+            }, object)
+        };
+    }
 } ());
