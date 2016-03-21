@@ -5,7 +5,7 @@
 
     angular
         .module("uiMultiselectApp")
-        .controller("IndexCtrl", ["$scope",
+        .controller("MultiselectCtrl", ["$scope",
             function($scope) {
                 var vm = this;
 
@@ -38,6 +38,6 @@
                     dropdownClass: "dropdown-menu multiselect-dropdown"
                 };
 
-                vm.selectedOptionId = 3;
+                vm.selectedItems = 3;
             }]);
 })();

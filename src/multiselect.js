@@ -4,10 +4,10 @@
     angular
         .module("ui.multiselect", ["ui.multiselect.templates"])
         .component("uiMultiselect", {
-            restrict: "AE",
             controller: uiMultiselectController,
             controllerAs: "vm",
             templateUrl: "multiselect.html",
+            transclude: true,
             bindings: {
                 items: "=",
                 options: "="
@@ -15,7 +15,23 @@
             require: {
                 ngModel: "ngModel"
             }
+        })
+        .component("uiItem", {
+            controller: uiItemController,
+            controllerAs: "vm",
+            bindings: {
+                itemId: "@",
+                itemDisplay: "@",
+                itemSelected: "@"
+            },
+            require: {
+                uiMultiselectController: "^uiMultiselect"
+            }
         });
+
+    /**
+     * The multiselect controller
+     */
 
     uiMultiselectController.$inject = ["$scope", "$element", "$document", "$filter"];
 
@@ -23,27 +39,30 @@
         var vm = this;
 
         vm.$onInit = function() {
-            var options = vm.options || {};
+            var options = {};
+            var defaultOptions = {
+                selectionLimit: 0,
+                searchLimit: 25,
+                selectedDisplayLimit: 5,
+                unselectedDisplayLimit: 10,
+                defaultText: "Select",
+                bindId: false,
 
-            options.selectionLimit = options.selectionLimit || 0;
-            options.searchLimit = options.searchLimit || 25;
-            options.selectedDisplayLimit = options.selectedDisplayLimit || 5;
-            options.unselectedDisplayLimit = options.unselectedDisplayLimit || 10;
-            options.defaultText = options.defaultText || "Select";
-            options.bindId = options.bindId || false;
+                containerClass: "btn-group",
+                toggleClass: "form-control dropdown-toggle btn btn-default btn-block",
+                dropdownClass: "dropdown-menu",
 
-            // custom classes
-            options.containerClass = options.containerClass || "btn-group";
-            options.toggleClass = options.toggleClass || "form-control dropdown-toggle btn btn-default btn-block";
-            options.dropdownClass = options.dropdownClass || "dropdown-menu";
+                disabled: false,
+                formElement: ""
+            };
 
-            options.disabled = options.disabled || false;
-
+            angular.extend(options, defaultOptions, vm.options);
+            
             vm.options = options;
 
             vm.searchFilter = "";
 
-            // initialize the display indexes
+            /** initialize the display indexes */
             vm.selectedDisplayIndex = 0;
             vm.unselectedDisplayIndex = 0;
 
@@ -60,6 +79,7 @@
 
             vm.toggleDropdown = toggleDropdown;
             vm.toggleItem = toggleItem;
+            vm.addItem = addItem;
             vm.getButtonText = getButtonText;
             vm.getId = getId;
             vm.getDisplay = getDisplay;
@@ -105,9 +125,11 @@
             }
         };
 
-        // This search function is optimized to take into account the search limit.
-        // Using angular limitTo filter is not efficient for big lists, because it still runs the search for
-        // all elements, even if the limit is reached
+        /**
+         * This search function is optimized to take into account the search limit.
+         * Using angular limitTo filter is not efficient for big lists, because it still runs the search for
+         * all elements, even if the limit is reached
+         */
         var search = function() {
             var counter = 0;
             return function(item) {
@@ -163,7 +185,7 @@
 
             if (!vm.ngModel.$viewValue) {
                 vm.selectedItems = [];
-                // take a copy
+                /** take a copy */
                 vm.unselectedItems = vm.resolvedItems.slice();
             } else {
                 vm.selectedItems = vm.resolvedItems.filter(function(el) {
@@ -193,34 +215,44 @@
             updateSelectionViews(true);
         };
 
+        var addItem = function(item, selected) {
+            vm.resolvedItems.push(item);
+            if (selected) {
+                updateViewValue([item].concat(vm.selectedItems));
+            }
+            updateSelectionLists();
+        };
+
         var updateItems = function() {
             vm.resolvedItems = [];
-            if (typeof vm.items === "function") {
-                vm.items().then(function(resolvedItems) {
-                    vm.resolvedItems = resolvedItems;
+            if (vm.items) {
+                if (typeof vm.items === "function") {
+                    vm.items().then(function(resolvedItems) {
+                        vm.resolvedItems = resolvedItems;
+                        updateSelectionLists();
+                    });
+                } else {
+                    vm.resolvedItems = vm.items;
                     updateSelectionLists();
-                });
-            } else {
-                vm.resolvedItems = vm.items;
-                updateSelectionLists();
+                }
             }
         };
 
-        var updateViewValue = function() {
+        var updateViewValue = function(selectedItems) {
             var viewValue = undefined;
             if (vm.options.selectionLimit === 1) {
                 if (vm.options.bindId) {
-                    viewValue = vm.getId(vm.selectedItems[0]);
+                    viewValue = vm.getId(selectedItems[0]);
                 } else {
-                    viewValue = vm.selectedItems[0];
+                    viewValue = selectedItems[0];
                 }
             } else {
                 if (vm.options.bindId) {
-                    viewValue = vm.selectedItems.map(function(el) {
+                    viewValue = selectedItems.map(function(el) {
                         return vm.getId(el);
                     });
                 } else {
-                    viewValue = angular.copy(vm.selectedItems);
+                    viewValue = angular.copy(selectedItems);
                 }
             }
             vm.ngModel.$setViewValue(viewValue);
@@ -228,7 +260,7 @@
 
         var onSelectedItemsChanged = function(newValue, oldValue) {
             if (!angular.equals(newValue, oldValue)) {
-                updateViewValue();
+                updateViewValue(newValue);
             }
         };
 
@@ -359,6 +391,36 @@
                     return null;
                 }
             }, object)
+        };
+    }
+
+    /**
+     * The item controller
+     */
+
+    uiItemController.$inject = [];
+
+    function uiItemController() {
+        var vm = this;
+
+        vm.$onInit = function() {
+            var options = vm.uiMultiselectController.options;
+            var itemSelected = !!vm.itemSelected;
+
+            if (vm.itemId && vm.itemDisplay &&
+                options.idProp && options.displayProp) {
+                var item = {};
+                item[options.idProp] = vm.itemId;
+                item[options.displayProp] = vm.itemDisplay;
+
+                vm.uiMultiselectController.addItem(item, itemSelected);
+            } else {
+                if (vm.itemId) {
+                    vm.uiMultiselectController.addItem(vm.itemId, itemSelected);
+                } else if (vm.itemDisplay) {
+                    vm.uiMultiselectController.addItem(vm.itemDisplay, itemSelected);
+                }
+            }
         };
     }
 } ());

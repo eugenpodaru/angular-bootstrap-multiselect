@@ -1,3 +1,4 @@
+<input name="{{vm.options.formElement}}" hidden="hidden" ng-model="vm.ngModel.$viewValue" ng-if="vm.options.formElement"/>
 <div class="{{::vm.options.containerClass}}">
     <button type="button" class="{{::vm.options.toggleClass}}" ng-click="vm.toggleDropdown()" ng-disabled="vm.options.disabled">
         {{vm.getButtonText()}}&nbsp;<span class="caret"></span>
@@ -63,3 +64,4 @@
         </li>
     </ul>
 </div>
+<div ng-show="false" ng-transclude></div>

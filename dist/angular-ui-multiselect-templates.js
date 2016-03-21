@@ -2,6 +2,7 @@ angular.module('ui.multiselect.templates', ['multiselect.html']);
 
 angular.module("multiselect.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("multiselect.html",
+    "<input name=\"{{vm.options.formElement}}\" hidden=\"hidden\" ng-model=\"vm.ngModel.$viewValue\" ng-if=\"vm.options.formElement\"/>\n" +
     "<div class=\"{{::vm.options.containerClass}}\">\n" +
     "    <button type=\"button\" class=\"{{::vm.options.toggleClass}}\" ng-click=\"vm.toggleDropdown()\" ng-disabled=\"vm.options.disabled\">\n" +
     "        {{vm.getButtonText()}}&nbsp;<span class=\"caret\"></span>\n" +
@@ -66,5 +67,6 @@ angular.module("multiselect.html", []).run(["$templateCache", function($template
     "            <a>{{vm.selectedItems.length || 0}} / {{vm.options.selectionLimit}} selected</a>\n" +
     "        </li>\n" +
     "    </ul>\n" +
-    "</div>");
+    "</div>\n" +
+    "<div ng-show=\"false\" ng-transclude></div>");
 }]);
