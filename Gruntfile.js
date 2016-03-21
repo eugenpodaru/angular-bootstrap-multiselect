@@ -1,9 +1,10 @@
-module.exports = function (grunt) {
+module.exports = function(grunt) {
 
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks("grunt-contrib-watch");
+    grunt.loadNpmTasks('grunt-contrib-less');
     grunt.loadNpmTasks('grunt-jscs');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-karma');
@@ -75,6 +76,14 @@ module.exports = function (grunt) {
             }
         },
 
+        less: {
+            options: {},
+            files: {
+                src: ['src/**/*.less'],
+                dest: 'dist/angular-ui-multiselect.css'
+            }
+        },
+
         concat: {
             options: {},
             files: {
@@ -142,7 +151,7 @@ module.exports = function (grunt) {
     grunt.registerTask('check', ['bootlint', 'jshint', 'jscs']);
 
     // Build files
-    grunt.registerTask('build', ['html2js', 'concat', 'ngAnnotate', 'uglify']);
+    grunt.registerTask('build', ['html2js', 'concat', 'ngAnnotate', 'uglify', 'less']);
 
     // Continuous integration task
     grunt.registerTask('ci', ['clean', 'check', 'build', 'karma:ci']);

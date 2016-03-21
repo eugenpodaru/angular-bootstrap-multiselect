@@ -48,8 +48,8 @@
                 defaultText: "Select",
                 bindId: false,
 
-                containerClass: "btn-group",
-                toggleClass: "form-control dropdown-toggle btn btn-default btn-block",
+                containerClass: "multiselect-container",
+                toggleClass: "btn btn-default",
                 dropdownClass: "dropdown-menu",
 
                 disabled: false,
@@ -57,7 +57,7 @@
             };
 
             angular.extend(options, defaultOptions, vm.options);
-            
+
             vm.options = options;
 
             vm.searchFilter = "";
