@@ -30,6 +30,7 @@
   background-image: none;
   border: 1px solid transparent;
   white-space: nowrap;
+  width: 100%;
   padding: 6px 12px;
   font-size: 14px;
   line-height: 1.42857143;
@@ -113,10 +114,11 @@
   position: absolute;
   top: 100%;
   left: 0;
+  width: 100%;
   z-index: 1000;
   display: none;
   float: left;
-  min-width: 160px;
+  min-width: 200px;
   padding: 5px 0;
   margin: 2px 0 0;
   list-style: none;
@@ -125,9 +127,9 @@
   background-color: #fff;
   border: 1px solid rgba(0, 0, 0, 0.15);
   border-radius: 4px;
+  background-clip: padding-box;
   -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
-  background-clip: padding-box;
 }
 .multiselect-dropdown > li > a {
   display: block;
@@ -136,8 +138,12 @@
   font-weight: normal;
   line-height: 1.42857143;
   color: #333;
-  white-space: nowrap;
   text-decoration: none;
+  overflow: hidden;
+  -o-text-overflow: ellipsis;
+  -ms-text-overflow: ellipsis;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .multiselect-dropdown > li > a:hover,
 .multiselect-dropdown > li > a:focus {
@@ -200,17 +206,17 @@
 .multiselect-dropdown .glyphicon-chevron-up:before {
   content: "❮";
   -webkit-transform: rotate(90deg);
-  -moz-transform: rotate(90deg);
-  -o-transform: rotate(90deg);
   -ms-transform: rotate(90deg);
+  -o-transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
   transform: rotate(90deg);
 }
 .multiselect-dropdown .glyphicon-chevron-down:before {
   content: "❯";
   -webkit-transform: rotate(90deg);
-  -moz-transform: rotate(90deg);
-  -o-transform: rotate(90deg);
   -ms-transform: rotate(90deg);
+  -o-transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
   transform: rotate(90deg);
 }
 .multiselect-search {

@@ -5,14 +5,13 @@
     <meta charset="utf-8">
     <title>AngularJS ui-multiselect</title>
 
-    <link rel="stylesheet" href="../dist/angular-ui-multiselect.css">
-    <link rel="stylesheet" href="multiselect.css">
+    <link rel="stylesheet" href="../../dist/angular-ui-multiselect.css">
 </head>
 
 <body ng-app="uiMultiselectApp" ng-controller="MultiselectCtrl as vm">
 
     <div style="margin:100px;">
-        <ui-multiselect ng-model="vm.selectedItems" options="vm.options">
+        <ui-multiselect ng-model="vm.selectedItems" options="vm.options" style="width:300px">
             <ui-item item-id="1" item-display="Option 1"></ui-item>
             <ui-item item-id="2" item-display="Option 2"></ui-item>
             <ui-item item-id="3" item-display="Option 3" item-selected="true"></ui-item>
@@ -33,10 +32,29 @@
         </ui-multiselect>
     </div>
 
-    <script src="../bower_components/angular/angular.min.js"></script>
+    <script src="../../bower_components/angular/angular.min.js"></script>
     <!-- ui-multiselect files -->
-    <script src="../dist/angular-ui-multiselect.js"></script>
-    <script src="demo-with-view-items.js"></script>
+    <script src="../../dist/angular-ui-multiselect.js"></script>
+    <script>
+        angular.module("uiMultiselectApp", ["ui.multiselect"]);
+
+        angular
+            .module("uiMultiselectApp")
+            .controller("MultiselectCtrl", ["$scope",
+                function($scope) {
+                    var vm = this;
+
+                    vm.options = {
+                        idProp: "id",
+                        displayProp: "display",
+                        bindId: true,
+                        showSearch: true,
+                        showSelectAll: true,
+                        showUnselectAll : true,
+                        formElement: "formElement"
+                    };
+                }]);
+    </script>
 </body>
 
 </html>

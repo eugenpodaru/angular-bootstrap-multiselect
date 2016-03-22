@@ -75,6 +75,7 @@
     background-image: none;
     border: 1px solid transparent;
     white-space: nowrap;
+    width: 100%;
     .button-size(@padding-base-vertical; @padding-base-horizontal; @font-size-base; @line-height-base; @btn-border-radius-base);
     .user-select(none);
     .button-variant(@btn-default-color; @btn-default-bg; @btn-default-border);
@@ -127,10 +128,11 @@
     position: absolute;
     top: 100%;
     left: 0;
+    width: 100%;
     z-index: 1000;
     display: none;
     float: left;
-    min-width: 160px;
+    min-width: 200px;
     padding: 5px 0;
     margin: 2px 0 0;
     list-style: none;
@@ -139,8 +141,8 @@
     background-color: @dropdown-bg;
     border: 1px solid @dropdown-border;
     border-radius: @border-radius-base;
-    .box-shadow(0 6px 12px rgba(0,0,0,.175));
     background-clip: padding-box;
+    .box-shadow(0 6px 12px rgba(0,0,0,.175));
 
 
     & > li > a {
@@ -152,6 +154,7 @@
         color: @dropdown-link-color;
         white-space: nowrap;
         text-decoration: none;
+        .text-overflow();
 
         &:hover,
         &:focus {
@@ -234,22 +237,14 @@
     & .glyphicon-chevron-up {
         &:before {
             content: "❮";
-            -webkit-transform: rotate(90deg);
-            -moz-transform: rotate(90deg);
-            -o-transform: rotate(90deg);
-            -ms-transform: rotate(90deg);
-            transform: rotate(90deg);
+            .rotate(90deg);
         }
     }
 
     & .glyphicon-chevron-down {
         &:before {
             content: "❯";
-            -webkit-transform: rotate(90deg);
-            -moz-transform: rotate(90deg);
-            -o-transform: rotate(90deg);
-            -ms-transform: rotate(90deg);
-            transform: rotate(90deg);
+            .rotate(90deg);
         }
     }
 }
@@ -314,6 +309,14 @@
     border-radius: @border-radius;
 }
 
+.input-size(@input-height; @padding-vertical; @padding-horizontal; @font-size; @line-height; @border-radius) {
+    height: @input-height;
+    padding: @padding-vertical @padding-horizontal;
+    font-size: @font-size;
+    line-height: @line-height;
+    border-radius: @border-radius;
+}
+
 .form-control-focus(@color: @input-border-focus) {
     @color-rgba: rgba(red(@color), green(@color), blue(@color), .6);
 
@@ -335,13 +338,6 @@
     box-sizing: @boxmodel;
 }
 
-.transition(@transition) {
-    -moz-transition: @transition;
-    -webkit-transition: @transition;
-    -o-transition: @transition;
-    transition: @transition;
-}
-
 .placeholder(@color: @input-color-placeholder) {
     &::-moz-placeholder {
         color: @color;
@@ -357,12 +353,28 @@
     }
 }
 
-.input-size(@input-height; @padding-vertical; @padding-horizontal; @font-size; @line-height; @border-radius) {
-    height: @input-height;
-    padding: @padding-vertical @padding-horizontal;
-    font-size: @font-size;
-    line-height: @line-height;
-    border-radius: @border-radius;
+
+.rotate(@degrees) {
+    -webkit-transform: rotate(@degrees);
+    -ms-transform: rotate(@degrees);
+    -o-transform: rotate(@degrees);
+    -moz-transform: rotate(@degrees);
+    transform: rotate(@degrees);
+}
+
+.transition(@transition) {
+    -moz-transition: @transition;
+    -webkit-transition: @transition;
+    -o-transition: @transition;
+    transition: @transition;
+}
+
+.text-overflow() {
+    overflow: hidden;
+    -o-text-overflow: ellipsis;
+    -ms-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .user-select(@select) {
