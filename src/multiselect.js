@@ -69,14 +69,15 @@
 
             vm.resolvedItems = [];
 
-            $document.on("click", closeHandler);
-
             vm.ngModel.$render = updateSelectionLists;
             vm.ngModel.$viewChangeListeners.push(updateSelectionLists);
             vm.ngModel.$isEmpty = isValueEmpty;
 
             vm.selectedItemsWatcher = $scope.$watch("selectedItems", onSelectedItemsChanged, true);
             vm.itemsWatcher = $scope.$watch("items", onItemsChanged, true);
+
+            $document.on("click", closeHandler);
+            $document.on("DOMMouseScroll mousewheel", scrollHandler);
 
             vm.toggleDropdown = toggleDropdown;
             vm.toggleItem = toggleItem;
@@ -96,6 +97,7 @@
         };
 
         vm.$onDestroy = function() {
+            $document.off("DOMMouseScroll mousewheel", scrollHandler);
             $document.off("click", closeHandler);
 
             if (vm.selectedItemsWatcher) {
@@ -115,6 +117,37 @@
                 $scope.$apply(function() {
                     vm.open = false;
                 });
+            }
+        };
+
+        var scrollHandler = function(event) {
+            var prevent = function() {
+                event.stopPropagation();
+                event.preventDefault();
+                event.returnValue = false;
+                return false;
+            }
+
+            if (vm.open && vm.isMouseOver) {
+                var scrollDown = (event.type === "DOMMouseScroll" ?
+                    event.detail * -40 :
+                    event.wheelDelta) < 0;
+
+                if (scrollDown) {
+                    if (selectedPageDown(1) || unselectedPageDown(1)) {
+                        $scope.$apply(function() {
+                            updateSelectionViews();
+                        });
+                        return prevent();
+                    }
+                } else {
+                    if (unselectedPageUp(1) || selectedPageUp(1)) {
+                        $scope.$apply(function() {
+                            updateSelectionViews();
+                        });
+                        return prevent();
+                    }
+                }
             }
         };
 
@@ -362,34 +395,58 @@
             }
         };
 
-        var unselectedPageUp = function() {
-            var newStartIndex = vm.unselectedDisplayIndex - vm.options.unselectedDisplayLimit;
-            vm.unselectedDisplayIndex = newStartIndex > 0 ? newStartIndex : 0;
+        var unselectedPageUp = function(increment) {
+            increment = increment || vm.options.unselectedDisplayLimit;
+            var newStartIndex = vm.unselectedDisplayIndex - increment;
+            newStartIndex = newStartIndex > 0 ? newStartIndex : 0;
 
-            updateSelectionViews();
+            return vm.canUnselectedPageUp && unselectedScroll(newStartIndex);
         };
 
-        var unselectedPageDown = function() {
+        var unselectedPageDown = function(increment) {
+            increment = increment || vm.options.unselectedDisplayLimit;
             var limit = vm.unselectedItemsFiltered.length;
-            var newStartIndex = vm.unselectedDisplayIndex + vm.options.unselectedDisplayLimit;
-            vm.unselectedDisplayIndex = newStartIndex < limit ? newStartIndex : limit - vm.options.unselectedDisplayLimit - 1;
+            var newStartIndex = vm.unselectedDisplayIndex + increment;
+            newStartIndex = newStartIndex < limit ? newStartIndex : limit - vm.options.unselectedDisplayLimit - 1;
 
-            updateSelectionViews();
+            return vm.canUnselectedPageDown && unselectedScroll(newStartIndex);
         };
 
-        var selectedPageUp = function() {
-            var newStartIndex = vm.selectedDisplayIndex - vm.options.selectedDisplayLimit;
-            vm.selectedDisplayIndex = newStartIndex > 0 ? newStartIndex : 0;
+        var unselectedScroll = function(newStartIndex) {
+            if (vm.unselectedDisplayIndex !== newStartIndex) {
+                vm.unselectedDisplayIndex = newStartIndex;
+                updateSelectionViews();
 
-            updateSelectionViews();
+                return true;
+            }
+            return false;
         };
 
-        var selectedPageDown = function() {
+        var selectedPageUp = function(increment) {
+            increment = increment || vm.options.selectedDisplayLimit;
+            var newStartIndex = vm.selectedDisplayIndex - increment;
+            newStartIndex = newStartIndex > 0 ? newStartIndex : 0;
+
+            return vm.canSelectedPageUp && selectedScroll(newStartIndex);
+        };
+
+        var selectedPageDown = function(increment) {
+            increment = increment || vm.options.selectedDisplayLimit;
             var limit = vm.selectedItems.length;
-            var newStartIndex = vm.selectedDisplayIndex + vm.options.selectedDisplayLimit;
-            vm.selectedDisplayIndex = newStartIndex < limit ? newStartIndex : limit - vm.options.selectedDisplayLimit - 1;
+            var newStartIndex = vm.selectedDisplayIndex + increment;
+            newStartIndex = newStartIndex < limit ? newStartIndex : limit - vm.options.selectedDisplayLimit - 1;
 
-            updateSelectionViews();
+            return vm.canSelectedPageDown && selectedScroll(newStartIndex);
+        };
+
+        var selectedScroll = function(newStartIndex) {
+            if (vm.selectedDisplayIndex !== newStartIndex) {
+                vm.selectedDisplayIndex = newStartIndex;
+                updateSelectionViews();
+
+                return true;
+            }
+            return false;
         };
 
         var getRecursiveProperty = function(object, path) {

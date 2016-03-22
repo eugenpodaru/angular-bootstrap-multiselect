@@ -3,7 +3,8 @@
     <button type="button" class="{{::vm.options.toggleClass}}" ng-click="vm.toggleDropdown()" ng-disabled="vm.options.disabled">
         {{vm.getButtonText()}}&nbsp;<span class="caret"></span>
     </button>
-    <ul class="{{::vm.options.dropdownClass}}" ng-show="vm.open" style="display:block">
+    <ul class="{{::vm.options.dropdownClass}}" ng-show="vm.open" style="display:block"
+        ng-mouseenter="vm.isMouseOver = true" ng-mouseleave="vm.isMouseOver = false">
 
         <li ng-show="vm.options.showSelectAll">
             <a ng-click="vm.selectAll()" href="">

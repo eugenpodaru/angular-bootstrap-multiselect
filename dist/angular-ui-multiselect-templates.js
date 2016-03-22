@@ -7,7 +7,8 @@ angular.module("multiselect.html", []).run(["$templateCache", function($template
     "    <button type=\"button\" class=\"{{::vm.options.toggleClass}}\" ng-click=\"vm.toggleDropdown()\" ng-disabled=\"vm.options.disabled\">\n" +
     "        {{vm.getButtonText()}}&nbsp;<span class=\"caret\"></span>\n" +
     "    </button>\n" +
-    "    <ul class=\"{{::vm.options.dropdownClass}}\" ng-show=\"vm.open\" style=\"display:block\">\n" +
+    "    <ul class=\"{{::vm.options.dropdownClass}}\" ng-show=\"vm.open\" style=\"display:block\"\n" +
+    "        ng-mouseenter=\"vm.isMouseOver = true\" ng-mouseleave=\"vm.isMouseOver = false\">\n" +
     "\n" +
     "        <li ng-show=\"vm.options.showSelectAll\">\n" +
     "            <a ng-click=\"vm.selectAll()\" href=\"\">\n" +
