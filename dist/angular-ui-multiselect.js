@@ -49,8 +49,9 @@
                 bindId: false,
 
                 containerClass: "multiselect-container",
-                toggleClass: "btn btn-default",
-                dropdownClass: "dropdown-menu",
+                toggleClass: "multiselect-toggle",
+                dropdownClass: "multiselect-dropdown",
+                searchClass: "multiselect-search",
 
                 disabled: false,
                 formElement: ""
@@ -156,9 +157,17 @@
             vm.selectedItemsView = vm.selectedItems.slice(vm.selectedDisplayIndex,
                 vm.selectedDisplayIndex + vm.options.selectedDisplayLimit);
 
+            if (vm.selectedItemsView.length === 0 && vm.selectedDisplayIndex > 0) {
+                selectedPageUp();
+            }
+
             vm.unselectedItemsFiltered = $filter("filter")(vm.unselectedItems, search());
             vm.unselectedItemsView = vm.unselectedItemsFiltered.slice(vm.unselectedDisplayIndex,
                 vm.unselectedDisplayIndex + vm.options.unselectedDisplayLimit);
+
+            if (vm.unselectedItemsView.length === 0 && vm.unselectedDisplayIndex > 0) {
+                unselectedPageUp();
+            }
 
             updateCapabilities();
         };
@@ -468,7 +477,7 @@ angular.module("multiselect.html", []).run(["$templateCache", function($template
     "\n" +
     "        <li ng-show=\"vm.options.showSearch && vm.unselectedItems.length > 0\">\n" +
     "            <div class=\"dropdown-header\">\n" +
-    "                <input type=\"text\" class=\"form-control input-sm\" ng-model=\"vm.searchFilter\" placeholder=\"Search...\" ng-change=\"vm.update()\" />\n" +
+    "                <input type=\"text\" class=\"{{::vm.options.searchClass}}\" ng-model=\"vm.searchFilter\" placeholder=\"Search...\" ng-change=\"vm.update()\" />\n" +
     "            </div>\n" +
     "        </li>\n" +
     "        <li ng-show=\"vm.options.showSearch && vm.unselectedItems.length > 0\" class=\"divider\"></li>\n" +

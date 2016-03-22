@@ -11,28 +11,26 @@
 
 <body ng-app="uiMultiselectApp" ng-controller="MultiselectCtrl as vm">
 
-    <div class="container">
-        <div class="row">
-            <ui-multiselect ng-model="vm.selectedItems" options="vm.options">
-                <ui-item item-id="1" item-display="Option 1"></ui-item>
-                <ui-item item-id="2" item-display="Option 2"></ui-item>
-                <ui-item item-id="3" item-display="Option 3" item-selected="true"></ui-item>
-                <ui-item item-id="4" item-display="Option 4"></ui-item>
-                <ui-item item-id="5" item-display="Option 5"></ui-item>
-                <ui-item item-id="6" item-display="Option 6"></ui-item>
-                <ui-item item-id="7" item-display="Option 7"></ui-item>
-                <ui-item item-id="8" item-display="Option 8"></ui-item>
-                <ui-item item-id="9" item-display="Option 9"></ui-item>
-                <ui-item item-id="10" item-display="Option 10"></ui-item>
-                <ui-item item-id="11" item-display="Option 11"></ui-item>
-                <ui-item item-id="12" item-display="Option 12"></ui-item>
-                <ui-item item-id="13" item-display="Option 13" item-selected="true"></ui-item>
-                <ui-item item-id="14" item-display="Option 14"></ui-item>
-                <ui-item item-id="15" item-display="Option 15"></ui-item>
-                <ui-item item-id="16" item-display="Option 16"></ui-item>
-                <ui-item item-id="17" item-display="Option 17"></ui-item>
-            </ui-multiselect>
-        </div>
+    <div style="margin:100px;">
+        <ui-multiselect ng-model="vm.selectedItems" options="vm.options">
+            <ui-item item-id="1" item-display="Option 1"></ui-item>
+            <ui-item item-id="2" item-display="Option 2"></ui-item>
+            <ui-item item-id="3" item-display="Option 3" item-selected="true"></ui-item>
+            <ui-item item-id="4" item-display="Option 4"></ui-item>
+            <ui-item item-id="5" item-display="Option 5"></ui-item>
+            <ui-item item-id="6" item-display="Option 6"></ui-item>
+            <ui-item item-id="7" item-display="Option 7"></ui-item>
+            <ui-item item-id="8" item-display="Option 8"></ui-item>
+            <ui-item item-id="9" item-display="Option 9"></ui-item>
+            <ui-item item-id="10" item-display="Option 10"></ui-item>
+            <ui-item item-id="11" item-display="Option 11"></ui-item>
+            <ui-item item-id="12" item-display="Option 12"></ui-item>
+            <ui-item item-id="13" item-display="Option 13" item-selected="true"></ui-item>
+            <ui-item item-id="14" item-display="Option 14"></ui-item>
+            <ui-item item-id="15" item-display="Option 15"></ui-item>
+            <ui-item item-id="16" item-display="Option 16"></ui-item>
+            <ui-item item-id="17" item-display="Option 17"></ui-item>
+        </ui-multiselect>
     </div>
 
     <script src="../bower_components/angular/angular.min.js"></script>

@@ -37,7 +37,7 @@
 
         <li ng-show="vm.options.showSearch && vm.unselectedItems.length > 0">
             <div class="dropdown-header">
-                <input type="text" class="form-control input-sm" ng-model="vm.searchFilter" placeholder="Search..." ng-change="vm.update()" />
+                <input type="text" class="{{::vm.options.searchClass}}" ng-model="vm.searchFilter" placeholder="Search..." ng-change="vm.update()" />
             </div>
         </li>
         <li ng-show="vm.options.showSearch && vm.unselectedItems.length > 0" class="divider"></li>

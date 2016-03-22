@@ -41,7 +41,7 @@ angular.module("multiselect.html", []).run(["$templateCache", function($template
     "\n" +
     "        <li ng-show=\"vm.options.showSearch && vm.unselectedItems.length > 0\">\n" +
     "            <div class=\"dropdown-header\">\n" +
-    "                <input type=\"text\" class=\"form-control input-sm\" ng-model=\"vm.searchFilter\" placeholder=\"Search...\" ng-change=\"vm.update()\" />\n" +
+    "                <input type=\"text\" class=\"{{::vm.options.searchClass}}\" ng-model=\"vm.searchFilter\" placeholder=\"Search...\" ng-change=\"vm.update()\" />\n" +
     "            </div>\n" +
     "        </li>\n" +
     "        <li ng-show=\"vm.options.showSearch && vm.unselectedItems.length > 0\" class=\"divider\"></li>\n" +

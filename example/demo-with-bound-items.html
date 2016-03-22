@@ -11,11 +11,9 @@
 
 <body ng-app="uiMultiselectApp" ng-controller="MultiselectCtrl as vm">
 
-    <div class="container">
-        <div class="row">
-            <ui-multiselect ng-model="vm.selectedItems" items="vm.items" options="vm.options">
-            </ui-multiselect>
-        </div>
+    <div style="margin:100px;">
+        <ui-multiselect ng-model="vm.selectedItems" items="vm.items" options="vm.options">
+        </ui-multiselect>
     </div>
 
     <script src="../bower_components/angular/angular.min.js"></script>

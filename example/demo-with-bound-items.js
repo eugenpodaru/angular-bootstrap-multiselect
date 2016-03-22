@@ -33,9 +33,7 @@
                     bindId: true,
                     showSearch: true,
                     showSelectAll: true,
-                    showUnselectAll : true,
-                    toggleClass: "btn btn-default dropdown-toggle multiselect-toggle",
-                    dropdownClass: "dropdown-menu multiselect-dropdown"
+                    showUnselectAll : true
                 };
 
                 vm.selectedItems = 3;
