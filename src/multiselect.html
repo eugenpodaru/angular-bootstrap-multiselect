@@ -1,4 +1,9 @@
-<input id="{{vm.options.formElement}}" name="{{vm.options.formElement}}" hidden="hidden" ng-model="vm.ngModel.$viewValue" ng-if="vm.options.formElement"/>
+<select id="{{vm.options.formElement}}" name="{{vm.options.formElement}}" hidden="hidden" ng-if="vm.options.formElement && vm.hasMultipleSelection" multiple>
+    <option ng-repeat="item in vm.selectedItems" value="{{vm.getId(item)}}" selected>{{vm.getDisplay(item)}}</option>
+</select>
+<select id="{{vm.options.formElement}}" name="{{vm.options.formElement}}" hidden="hidden" ng-if="vm.options.formElement && !vm.hasMultipleSelection">
+    <option ng-repeat="item in vm.selectedItems" value="{{vm.getId(item)}}" selected>{{vm.getDisplay(item)}}</option>
+</select>
 <div class="{{::vm.options.containerClass}}">
     <button type="button" class="{{::vm.options.toggleClass}}" ng-click="vm.toggleDropdown()" ng-disabled="vm.options.disabled">
         {{vm.getButtonText()}}&nbsp;<span class="caret"></span>

@@ -2,7 +2,12 @@ angular.module('ui.multiselect.templates', ['multiselect.html']);
 
 angular.module("multiselect.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("multiselect.html",
-    "<input id=\"{{vm.options.formElement}}\" name=\"{{vm.options.formElement}}\" hidden=\"hidden\" ng-model=\"vm.ngModel.$viewValue\" ng-if=\"vm.options.formElement\"/>\n" +
+    "<select id=\"{{vm.options.formElement}}\" name=\"{{vm.options.formElement}}\" hidden=\"hidden\" ng-if=\"vm.options.formElement && vm.hasMultipleSelection\" multiple>\n" +
+    "    <option ng-repeat=\"item in vm.selectedItems\" value=\"{{vm.getId(item)}}\" selected>{{vm.getDisplay(item)}}</option>\n" +
+    "</select>\n" +
+    "<select id=\"{{vm.options.formElement}}\" name=\"{{vm.options.formElement}}\" hidden=\"hidden\" ng-if=\"vm.options.formElement && !vm.hasMultipleSelection\">\n" +
+    "    <option ng-repeat=\"item in vm.selectedItems\" value=\"{{vm.getId(item)}}\" selected>{{vm.getDisplay(item)}}</option>\n" +
+    "</select>\n" +
     "<div class=\"{{::vm.options.containerClass}}\">\n" +
     "    <button type=\"button\" class=\"{{::vm.options.toggleClass}}\" ng-click=\"vm.toggleDropdown()\" ng-disabled=\"vm.options.disabled\">\n" +
     "        {{vm.getButtonText()}}&nbsp;<span class=\"caret\"></span>\n" +

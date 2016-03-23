@@ -225,6 +225,7 @@
             vm.canSelectedPageUp = vm.selectedDisplayIndex > 0;
 
             vm.canSelectItem = !(vm.options.selectionLimit && vm.options.selectionLimit > 1 && vm.selectedItems.length >= vm.options.selectionLimit);
+            vm.hasMultipleSelection = vm.options.selectionLimit !== 1;
         };
 
         var updateSelectionLists = function() {
