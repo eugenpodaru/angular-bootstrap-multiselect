@@ -41,12 +41,19 @@
         vm.$onInit = function() {
             var options = {};
             var defaultOptions = {
-                selectionLimit: 0,
+                selectionLimit: 1,
                 searchLimit: 25,
                 selectedDisplayLimit: 5,
                 unselectedDisplayLimit: 10,
                 defaultText: "Select",
-                bindId: false,
+                
+                idProp: "id",
+                displayProp: "display",
+                bindId: true,
+                
+                showSearch: false,
+                showSelectAll: false,
+                showUnselectAll: false,
 
                 containerClass: "multiselect-container",
                 toggleClass: "multiselect-toggle",
