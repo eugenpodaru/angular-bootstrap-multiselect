@@ -77,7 +77,7 @@
             vm.itemsWatcher = $scope.$watch("items", onItemsChanged, true);
 
             $document.on("click", closeHandler);
-            $document.on("DOMMouseScroll mousewheel", scrollHandler);
+            $document.on("wheel", scrollHandler);
 
             vm.toggleDropdown = toggleDropdown;
             vm.toggleItem = toggleItem;
@@ -97,7 +97,7 @@
         };
 
         vm.$onDestroy = function() {
-            $document.off("DOMMouseScroll mousewheel", scrollHandler);
+            $document.off("wheel", scrollHandler);
             $document.off("click", closeHandler);
 
             if (vm.selectedItemsWatcher) {
@@ -124,14 +124,11 @@
             var prevent = function() {
                 event.stopPropagation();
                 event.preventDefault();
-                event.returnValue = false;
                 return false;
             }
 
             if (vm.open && vm.isMouseOver) {
-                var scrollDown = (event.type === "DOMMouseScroll" ?
-                    event.detail * -40 :
-                    event.wheelDelta) < 0;
+                var scrollDown = event.deltaY > 0;
 
                 if (scrollDown) {
                     if (selectedPageDown(1) || unselectedPageDown(1)) {
