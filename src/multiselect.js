@@ -73,8 +73,8 @@
             vm.ngModel.$viewChangeListeners.push(updateSelectionLists);
             vm.ngModel.$isEmpty = isValueEmpty;
 
-            vm.selectedItemsWatcher = $scope.$watch("selectedItems", onSelectedItemsChanged, true);
-            vm.itemsWatcher = $scope.$watch("items", onItemsChanged, true);
+            vm.selectedItemsWatcher = $scope.$watch("vm.selectedItems", onSelectedItemsChanged, true);
+            vm.itemsWatcher = $scope.$watch("vm.items", onItemsChanged, true);
 
             $document.on("click", closeHandler);
             $document.on("wheel", scrollHandler);
