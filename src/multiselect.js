@@ -10,7 +10,7 @@
             transclude: true,
             bindings: {
                 items: "=",
-                options: "="
+                userOptions: "<?options"
             },
             require: {
                 ngModel: "ngModel"
@@ -33,24 +33,23 @@
      * The multiselect controller
      */
 
-    uiMultiselectController.$inject = ["$scope", "$element", "$document", "$filter"];
+    uiMultiselectController.$inject = ["$scope", "$element", "$document", "$filter", "$log"];
 
-    function uiMultiselectController($scope, $element, $document, $filter) {
+    function uiMultiselectController($scope, $element, $document, $filter, $log) {
         var vm = this;
 
         vm.$onInit = function() {
-            var options = {};
-            var defaultOptions = {
+            var options = {
                 selectionLimit: 1,
                 searchLimit: 25,
                 selectedDisplayLimit: 5,
                 unselectedDisplayLimit: 10,
                 defaultText: "Select",
-                
+
                 idProp: "id",
                 displayProp: "display",
                 bindId: true,
-                
+
                 showSearch: false,
                 showSelectAll: false,
                 showUnselectAll: false,
@@ -64,7 +63,9 @@
                 formElement: ""
             };
 
-            angular.extend(options, defaultOptions, vm.options);
+            if (vm.userOptions) {
+                angular.extend(options, vm.userOptions);
+            }
 
             vm.options = options;
 
