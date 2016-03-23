@@ -121,14 +121,15 @@
         };
 
         var scrollHandler = function(event) {
+            var ev = event.originalEvent || event;
             var prevent = function() {
-                event.stopPropagation();
-                event.preventDefault();
+                ev.stopPropagation();
+                ev.preventDefault();
                 return false;
             }
 
             if (vm.open && vm.isMouseOver) {
-                var scrollDown = event.deltaY > 0;
+                var scrollDown = ev.deltaY > 0;
 
                 if (scrollDown) {
                     if (selectedPageDown(1) || unselectedPageDown(1)) {
