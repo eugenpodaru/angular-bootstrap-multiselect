@@ -1,6 +1,6 @@
 {
   "name": "angular-ui-multiselect",
-  "version": "1.1.7",
+  "version": "1.1.8",
   "main": "dist/angular-ui-multiselect.min.js",
   "ignore": [
     "src",
