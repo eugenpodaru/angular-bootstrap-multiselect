@@ -1,4 +1,4 @@
-(function() {
+(function(angular) {
     "use strict";
 
     angular
@@ -36,6 +36,8 @@
     uiMultiselectController.$inject = ["$scope", "$element", "$document", "$filter", "$log"];
 
     function uiMultiselectController($scope, $element, $document, $filter, $log) {
+
+        /* jshint validthis: true */
         var vm = this;
 
         vm.$onInit = function() {
@@ -116,19 +118,19 @@
             }
         };
 
-        var toggleDropdown = function() {
+        function toggleDropdown() {
             vm.open = !vm.open;
-        };
+        }
 
-        var closeHandler = function(event) {
+        function closeHandler(event) {
             if (!$element[0].contains(event.target)) {
                 $scope.$apply(function() {
                     vm.open = false;
                 });
             }
-        };
+        }
 
-        var scrollHandler = function(event) {
+        function scrollHandler(event) {
             var ev = event.originalEvent || event;
             var prevent = function() {
                 ev.stopPropagation();
@@ -155,22 +157,22 @@
                     }
                 }
             }
-        };
+        }
 
-        var isValueEmpty = function(value) {
+        function isValueEmpty(value) {
             if (value && angular.isArray(value)) {
                 return (value.length === 0);
             } else {
                 return !!value;
             }
-        };
+        }
 
         /**
          * This search function is optimized to take into account the search limit.
          * Using angular limitTo filter is not efficient for big lists, because it still runs the search for
          * all elements, even if the limit is reached
          */
-        var search = function() {
+        function search() {
             var counter = 0;
             return function(item) {
                 if (counter > vm.options.searchLimit) {
@@ -185,9 +187,9 @@
                     return result;
                 }
             }
-        };
+        }
 
-        var updateSelectionViews = function(reset) {
+        function updateSelectionViews(reset) {
             if (reset) {
                 vm.selectedDisplayIndex = 0;
                 vm.unselectedDisplayIndex = 0;
@@ -209,9 +211,9 @@
             }
 
             updateCapabilities();
-        };
+        }
 
-        var updateCapabilities = function() {
+        function updateCapabilities() {
             vm.hasUnselectedPageDown = vm.unselectedItemsFiltered.length > vm.options.unselectedDisplayLimit;
             vm.canUnselectedPageDown = vm.unselectedDisplayIndex + vm.options.unselectedDisplayLimit < vm.unselectedItemsFiltered.length;
 
@@ -226,11 +228,12 @@
 
             vm.canSelectItem = !(vm.options.selectionLimit && vm.options.selectionLimit > 1 && vm.selectedItems.length >= vm.options.selectionLimit);
             vm.hasMultipleSelection = vm.options.selectionLimit !== 1;
-        };
+        }
 
-        var updateSelectionLists = function() {
-            if (vm.resolvedItems.length === 0)
+        function updateSelectionLists() {
+            if (vm.resolvedItems.length === 0) {
                 return;
+            }
 
             if (!vm.ngModel.$viewValue) {
                 vm.selectedItems = [];
@@ -239,10 +242,10 @@
             } else {
                 vm.selectedItems = vm.resolvedItems.filter(function(el) {
                     var id = vm.getId(el);
-                    var selectedId = undefined;
+                    var selectedId;
                     if (angular.isArray(vm.ngModel.$viewValue)) {
                         for (var i = 0; i < vm.ngModel.$viewValue.length; i++) {
-                            var selectedId = vm.getId(vm.ngModel.$viewValue[i]);
+                            selectedId = vm.getId(vm.ngModel.$viewValue[i]);
                             if (id === selectedId) {
                                 return true;
                             }
@@ -262,17 +265,17 @@
             }
 
             updateSelectionViews(true);
-        };
+        }
 
-        var addItem = function(item, selected) {
+        function addItem(item, selected) {
             vm.resolvedItems.push(item);
             if (selected) {
                 updateViewValue([item].concat(vm.selectedItems));
             }
             updateSelectionLists();
-        };
+        }
 
-        var updateItems = function() {
+        function updateItems() {
             vm.resolvedItems = [];
             if (vm.items) {
                 if (typeof vm.items === "function") {
@@ -285,10 +288,10 @@
                     updateSelectionLists();
                 }
             }
-        };
+        }
 
-        var updateViewValue = function(selectedItems) {
-            var viewValue = undefined;
+        function updateViewValue(selectedItems) {
+            var viewValue;
             if (vm.options.selectionLimit === 1) {
                 if (vm.options.bindId) {
                     viewValue = vm.getId(selectedItems[0]);
@@ -305,21 +308,21 @@
                 }
             }
             vm.ngModel.$setViewValue(viewValue);
-        };
+        }
 
-        var onSelectedItemsChanged = function(newValue, oldValue) {
+        function onSelectedItemsChanged(newValue, oldValue) {
             if (!angular.equals(newValue, oldValue)) {
                 updateViewValue(newValue);
             }
-        };
+        }
 
-        var onItemsChanged = function(newValue, oldValue) {
+        function onItemsChanged(newValue, oldValue) {
             if (!angular.equals(newValue, oldValue)) {
                 updateItems();
             }
-        };
+        }
 
-        var getButtonText = function() {
+        function getButtonText() {
             if (vm.selectedItems && vm.selectedItems.length === 1) {
                 return vm.getDisplay(vm.selectedItems[0]);
             }
@@ -334,38 +337,40 @@
             } else {
                 return vm.options.defaultText;
             }
-        };
+        }
 
-        var update = function() {
+        function update() {
             updateSelectionViews(true);
-        };
+        }
 
-        var selectAll = function() {
+        function selectAll() {
             vm.selectedItems = vm.resolvedItems.slice();
             vm.unselectedItems = [];
 
             updateSelectionViews(true);
-        };
+        }
 
-        var unselectAll = function() {
+        function unselectAll() {
             vm.selectedItems = [];
             vm.unselectedItems = vm.resolvedItems.slice();
 
             updateSelectionViews(true);
-        };
+        }
 
-        var toggleItem = function(item) {
+        function toggleItem(item) {
             var selectedIndex = vm.selectedItems.indexOf(item);
             var currentlySelected = (selectedIndex !== -1);
+            var unselectedIndex;
+
             if (currentlySelected && (vm.options.selectionLimit === 0 || vm.options.selectionLimit > 1)) {
                 vm.unselectedItems.push(vm.selectedItems[selectedIndex]);
                 vm.selectedItems.splice(selectedIndex, 1);
             } else if (!currentlySelected && (vm.options.selectionLimit === 0 || vm.selectedItems.length < vm.options.selectionLimit)) {
-                var unselectedIndex = vm.unselectedItems.indexOf(item);
+                unselectedIndex = vm.unselectedItems.indexOf(item);
                 vm.unselectedItems.splice(unselectedIndex, 1);
                 vm.selectedItems.push(item);
             } else if (!currentlySelected && vm.options.selectionLimit === 1) {
-                var unselectedIndex = vm.unselectedItems.indexOf(item);
+                unselectedIndex = vm.unselectedItems.indexOf(item);
                 vm.unselectedItems.splice(unselectedIndex, 1);
                 vm.selectedItems.splice(0, 1);
                 vm.selectedItems.push(item);
@@ -374,9 +379,9 @@
             }
 
             updateSelectionViews();
-        };
+        }
 
-        var getId = function(item) {
+        function getId(item) {
             if (angular.isObject(item)) {
                 if (vm.options.idProp) {
                     return getRecursiveProperty(item, vm.options.idProp);
@@ -387,9 +392,9 @@
             } else {
                 return item;
             }
-        };
+        }
 
-        var getDisplay = function(item) {
+        function getDisplay(item) {
             if (angular.isObject(item)) {
                 if (vm.options.displayProp) {
                     return getRecursiveProperty(item, vm.options.displayProp);
@@ -400,26 +405,26 @@
             } else {
                 return item;
             }
-        };
+        }
 
-        var unselectedPageUp = function(increment) {
+        function unselectedPageUp(increment) {
             increment = increment || vm.options.unselectedDisplayLimit;
             var newStartIndex = vm.unselectedDisplayIndex - increment;
             newStartIndex = newStartIndex > 0 ? newStartIndex : 0;
 
             return vm.canUnselectedPageUp && unselectedScroll(newStartIndex);
-        };
+        }
 
-        var unselectedPageDown = function(increment) {
+        function unselectedPageDown(increment) {
             increment = increment || vm.options.unselectedDisplayLimit;
             var limit = vm.unselectedItemsFiltered.length;
             var newStartIndex = vm.unselectedDisplayIndex + increment;
             newStartIndex = newStartIndex < limit ? newStartIndex : limit - vm.options.unselectedDisplayLimit - 1;
 
             return vm.canUnselectedPageDown && unselectedScroll(newStartIndex);
-        };
+        }
 
-        var unselectedScroll = function(newStartIndex) {
+        function unselectedScroll(newStartIndex) {
             if (vm.unselectedDisplayIndex !== newStartIndex) {
                 vm.unselectedDisplayIndex = newStartIndex;
                 updateSelectionViews();
@@ -427,26 +432,26 @@
                 return true;
             }
             return false;
-        };
+        }
 
-        var selectedPageUp = function(increment) {
+        function selectedPageUp(increment) {
             increment = increment || vm.options.selectedDisplayLimit;
             var newStartIndex = vm.selectedDisplayIndex - increment;
             newStartIndex = newStartIndex > 0 ? newStartIndex : 0;
 
             return vm.canSelectedPageUp && selectedScroll(newStartIndex);
-        };
+        }
 
-        var selectedPageDown = function(increment) {
+        function selectedPageDown(increment) {
             increment = increment || vm.options.selectedDisplayLimit;
             var limit = vm.selectedItems.length;
             var newStartIndex = vm.selectedDisplayIndex + increment;
             newStartIndex = newStartIndex < limit ? newStartIndex : limit - vm.options.selectedDisplayLimit - 1;
 
             return vm.canSelectedPageDown && selectedScroll(newStartIndex);
-        };
+        }
 
-        var selectedScroll = function(newStartIndex) {
+        function selectedScroll(newStartIndex) {
             if (vm.selectedDisplayIndex !== newStartIndex) {
                 vm.selectedDisplayIndex = newStartIndex;
                 updateSelectionViews();
@@ -454,9 +459,9 @@
                 return true;
             }
             return false;
-        };
+        }
 
-        var getRecursiveProperty = function(object, path) {
+        function getRecursiveProperty(object, path) {
             return path.split(".").reduce(function(object, x) {
                 if (object) {
                     return object[x];
@@ -464,7 +469,7 @@
                     return null;
                 }
             }, object)
-        };
+        }
     }
 
     /**
@@ -474,6 +479,8 @@
     uiItemController.$inject = [];
 
     function uiItemController() {
+
+        /* jshint validthis: true */
         var vm = this;
 
         vm.$onInit = function() {
@@ -496,4 +503,4 @@
             }
         };
     }
-} ());
+} (angular));

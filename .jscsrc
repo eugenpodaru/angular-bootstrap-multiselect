@@ -10,7 +10,7 @@
     ],
     "requireOperatorBeforeLineBreak": true,
     "validateIndentation": 4,
-    "validateQuoteMarks": "'",
+    "validateQuoteMarks": "\"",
 
     "disallowMixedSpacesAndTabs": true,
     "disallowTrailingWhitespace": true,
@@ -45,7 +45,7 @@
     "disallowSpacesInsideParentheses": true,
 
 
-    "validateJSDoc": {
+    "jsDoc": {
         "checkParamNames": true,
         "requireParamTypes": true
     },

@@ -1,124 +1,169 @@
-'use strict';
+"use strict";
 
-describe("The multiselect directive, when using string models,", function () {
+describe("The multiselect directive, when using string models,", function() {
 
     var $scope;
     var $rootScope;
     var $compile;
 
-    beforeEach(angular.mock.module('ui.multiselect'));
+    beforeEach(angular.mock.module("ui.multiselect"));
 
-    beforeEach(inject(function (_$compile_, _$rootScope_) {
+    beforeEach(inject(function(_$compile_, _$rootScope_) {
         $scope = _$rootScope_.$new();
         $compile = _$compile_;
         $rootScope = _$rootScope_;
     }));
 
-    it('initializes the list lazily, when the first item is chosen', function () {
-        $scope.options = ['el1', 'el2', 'el3'];
-        var element = $compile("<ui-multiselect ng-model='selection' options='options'></ui-multiselect>")($scope);
+    it("initializes the list lazily, when the first item is chosen", function() {
+        $scope.items = ["el1", "el2", "el3"];
+        $scope.options = {
+            bindId: false,
+            selectionLimit: 0
+        };
+        var element = $compile("<ui-multiselect ng-model='selection' items='items' options='options'></ui-multiselect>")($scope);
         $scope.$digest();
-        expect(element.isolateScope().selectedOptions).toBeUndefined();
+        var controller = element.controller("uiMultiselect");
 
-        element.isolateScope().toggleItem($scope.options[0]);
-        expect(element.isolateScope().selectedOptions).toBeDefined();
-        expect(element.isolateScope().selectedOptions.length).toBe(1);
+        expect(controller.selectedItems).toBeDefined();
+        expect(controller.selectedItems.length).toBe(0);
+
+        controller.toggleItem($scope.items[0]);
+
+        expect(controller.selectedItems).toBeDefined();
+        expect(controller.selectedItems.length).toBe(1);
     });
 
-    it('can toggle items in the selection', function () {
-        $scope.options = ['el1', 'el2', 'el3'];
-        var element = $compile("<ui-multiselect ng-model='selection' options='options'></ui-multiselect>")($scope);
+    it("can toggle items in the selection", function() {
+        $scope.items = ["el1", "el2", "el3"];
+        $scope.options = {
+            bindId: false,
+            selectionLimit: 0
+        };
+
+        var element = $compile("<ui-multiselect ng-model='selection' items='items' options='options'></ui-multiselect>")($scope);
         $scope.$digest();
+        var controller = element.controller("uiMultiselect");
 
-        expect(element.isolateScope().unselectedOptions.length).toBe(3);
-        element.isolateScope().toggleItem(element.isolateScope().unselectedOptions[0]);
-        expect(element.isolateScope().selectedOptions).toBeDefined();
-        expect(element.isolateScope().selectedOptions.length).toBe(1);
-        expect(element.isolateScope().unselectedOptions.length).toBe(2);
+        expect(controller.unselectedItems.length).toBe(3);
 
-        element.isolateScope().toggleItem(element.isolateScope().selectedOptions[0]);
-        expect(element.isolateScope().selectedOptions.length).toBe(0);
-        expect(element.isolateScope().unselectedOptions.length).toBe(3);
+        controller.toggleItem(controller.unselectedItems[0]);
+
+        expect(controller.selectedItems).toBeDefined();
+        expect(controller.selectedItems.length).toBe(1);
+        expect(controller.unselectedItems.length).toBe(2);
+
+        controller.toggleItem(controller.selectedItems[0]);
+
+        expect(controller.selectedItems.length).toBe(0);
+        expect(controller.unselectedItems.length).toBe(3);
     });
 
-    it('shows a default label on the button when no items have been chosen', function () {
-        $scope.options = ['el1', 'el2', 'el3'];
-        var element = $compile("<ui-multiselect ng-model='selection' options='options'></ui-multiselect>")($scope);
-        $scope.$digest();
+    it("shows a default label on the button when no items have been chosen", function() {
+        $scope.items = ["el1", "el2", "el3"];
+        $scope.options = {
+            bindId: false,
+            selectionLimit: 0
+        };
 
-        expect(element.isolateScope().getButtonText()).toBe('Select');
+        var element = $compile("<ui-multiselect ng-model='selection' items='items' options='options'></ui-multiselect>")($scope);
+        $scope.$digest();
+        var controller = element.controller("uiMultiselect");
+
+        expect(controller.getButtonText()).toBe("Select");
     });
 
-    it('shows a custom label on the button when no items have been chosen', function () {
-        $scope.options = ['el1', 'el2', 'el3'];
-        var element = $compile("<ui-multiselect ng-model='selection' options='options' default-text='dummy'></ui-multiselect>")($scope);
-        $scope.$digest();
+    it("shows a custom label on the button when no items have been chosen", function() {
+        $scope.items = ["el1", "el2", "el3"];
+        $scope.options = {
+            bindId: false,
+            selectionLimit: 0,
+            defaultText: "dummy"
+        };
 
-        expect(element.isolateScope().getButtonText()).toBe('dummy');
+        var element = $compile("<ui-multiselect ng-model='selection' items='items' options='options'></ui-multiselect>")($scope);
+        $scope.$digest();
+        var controller = element.controller("uiMultiselect");
+
+        expect(controller.getButtonText()).toBe("dummy");
     });
 
-    it('shows the name of the element when one item is chosen', function () {
-        $scope.options = ['el1', 'el2', 'el3'];
-        $scope.selection = ['el1'];
-        var element = $compile("<ui-multiselect ng-model='selection' options='options'></ui-multiselect>")($scope);
-        $scope.$digest();
+    it("shows the name of the element when one item is chosen", function() {
+        $scope.items = ["el1", "el2", "el3"];
+        $scope.options = {
+            bindId: false,
+            selectionLimit: 0
+        };
+        $scope.selection = ["el1"];
 
-        expect(element.isolateScope().getButtonText()).toBe('el1');
+        var element = $compile("<ui-multiselect ng-model='selection' items='items' options='options'></ui-multiselect>")($scope);
+        $scope.$digest();
+        var controller = element.controller("uiMultiselect");
+
+        expect(controller.getButtonText()).toBe("el1");
     });
 
-    it('shows the number of elements when multiple items are chosen', function () {
-        $scope.options = ['el1', 'el2', 'el3'];
-        $scope.selection = ['el1', 'el2'];
-        var element = $compile("<ui-multiselect ng-model='selection' options='options'></ui-multiselect>")($scope);
-        $scope.$digest();
+    it("shows the number of elements when multiple items are chosen", function() {
+        $scope.items = ["el1", "el2", "el3"];
+        $scope.options = {
+            bindId: false,
+            selectionLimit: 0
+        };
+        $scope.selection = ["el1", "el2"];
 
-        expect(element.isolateScope().getButtonText()).toBe('2 selected');
+        var element = $compile("<ui-multiselect ng-model='selection' items='items' options='options'></ui-multiselect>")($scope);
+        $scope.$digest();
+        var controller = element.controller("uiMultiselect");
+
+        expect(controller.getButtonText()).toBe("2 selected");
     });
 
-    it('can select and unselect all at once', function () {
-        $scope.options = ['el1', 'el2', 'el3'];
+    it("can select and unselect all at once", function() {
+        $scope.items = ["el1", "el2", "el3"];
+        $scope.options = {
+            bindId: false,
+            selectionLimit: 0
+        };
         $scope.selection = [];
-        var element = $compile("<ui-multiselect ng-model='selection' options='options'></ui-multiselect>")($scope);
+
+        var element = $compile("<ui-multiselect ng-model='selection' items='items' options='options'></ui-multiselect>")($scope);
+        $scope.$digest();
+        var controller = element.controller("uiMultiselect");
+
+        controller.selectAll();
         $scope.$digest();
 
-        element.isolateScope().selectAll();
-        $scope.$digest();
         expect($scope.selection.length).toBe(3);
-        expect(element.isolateScope().selectedOptions.length).toBe(3);
-        expect(element.isolateScope().unselectedOptions.length).toBe(0);
+        expect(controller.selectedItems.length).toBe(3);
+        expect(controller.unselectedItems.length).toBe(0);
 
-        element.isolateScope().unselectAll();
+        controller.unselectAll();
         $scope.$digest();
+
         expect($scope.selection.length).toBe(0);
-        expect(element.isolateScope().selectedOptions.length).toBe(0);
-        expect(element.isolateScope().unselectedOptions.length).toBe(3);
+        expect(controller.selectedItems.length).toBe(0);
+        expect(controller.unselectedItems.length).toBe(3);
     });
 
-    it('knows which items are selected', function () {
-        $scope.options = ['el1', 'el2', 'el3'];
-        $scope.selection = ['el2'];
-        var element = $compile("<ui-multiselect ng-model='selection' options='options'></ui-multiselect>")($scope);
+    it("can search inside the options", function() {
+        $scope.items = ["el1", "el2", "el3"];
+        $scope.options = {
+            bindId: false,
+            selectionLimit: 0
+        };
+
+        var element = $compile("<ui-multiselect ng-model='selection' items='items' options='options'></ui-multiselect>")($scope);
         $scope.$digest();
+        var controller = element.controller("uiMultiselect");
 
-        expect(element.isolateScope().isSelected($scope.options[1])).toBeTruthy();
-        expect(element.isolateScope().isSelected($scope.options[2])).toBeFalsy();
+        controller.searchFilter = "2";
+        controller.update();
+
+        expect(controller.unselectedItemsFiltered.length).toBe(1);
+        expect(controller.unselectedItemsFiltered[0]).toEqual($scope.items[1]);
+
+        controller.searchFilter = "5";
+        controller.update();
+
+        expect(controller.unselectedItemsFiltered.length).toBe(0);
     });
-
-    it('can search inside the options', function () {
-        $scope.options = ['el1', 'el2', 'el3'];
-        $scope.selection = ['el2'];
-        var element = $compile("<ui-multiselect ng-model='selection' options='options'></ui-multiselect>")($scope);
-        $scope.$digest();
-
-        element.isolateScope().searchFilter = '2';
-        expect(element.isolateScope().search()($scope.options[0])).toBeFalsy();
-        expect(element.isolateScope().search()($scope.options[1])).toBeTruthy();
-        expect(element.isolateScope().search()($scope.options[2])).toBeFalsy();
-
-        element.isolateScope().searchFilter = '5';
-        expect(element.isolateScope().search()($scope.options[0])).toBeFalsy();
-        expect(element.isolateScope().search()($scope.options[1])).toBeFalsy();
-        expect(element.isolateScope().search()($scope.options[2])).toBeFalsy();
-    });
-
 });

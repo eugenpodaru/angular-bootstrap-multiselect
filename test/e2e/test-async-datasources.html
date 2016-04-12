@@ -4,7 +4,8 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title>Angular Bootstrap Multiselect Test</title>
-    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+
+    <link rel="stylesheet" href="../../dist/angular-ui-multiselect.css">
 </head>
 
 <body ng-app="testApp">
@@ -15,7 +16,8 @@
 
         <form name="asyncTest">
             <pre>Model value: {{selection1}}</pre>
-            <ui-multiselect ng-model="selection1" options="someFunction" search-filter="searchFilter" show-search="true"></ui-multiselect>
+            <input type="text" ng-model="itemPrefix"></input>
+            <ui-multiselect ng-model="selection1" items="items" options="options"></ui-multiselect>
         </form>
 
     </div>
@@ -23,18 +25,32 @@
     <script src="../../bower_components/angular/angular.js"></script>
     <script src="../../dist/angular-ui-multiselect.min.js"></script>
     <script>
-        angular.module('testApp', ['ui.multiselect']);
-    angular.module('testApp').controller('TestController', ['$scope', '$q', '$timeout', function ($scope, $q, $timeout) {
-        $scope.someFunction = function () {
-            return $q(function (resolve, reject) {
-                $timeout(function () {
-                    resolve([$scope.searchFilter + '1', $scope.searchFilter + '2', $scope.searchFilter + '3', $scope.searchFilter + '4'])
-                }, 1000);
-            });
-        }
-
-    }]);
-
+        angular
+            .module("testApp", ["ui.multiselect"]);
+        angular
+            .module("testApp")
+            .controller("TestController", ["$scope", "$q", "$timeout",
+                function ($scope, $q, $timeout) {
+                    $scope.options = {
+                        bindId: false,
+                        selectionLimit: 0,
+                        showSearch: true
+                    };
+                    
+                    $scope.$watch("itemPrefix", onItemPrefixChanged);
+                    
+                    onItemPrefixChanged();
+                    
+                    function onItemPrefixChanged(){
+                        $scope.items = function() {
+                            return $q(function (resolve, reject) {
+                                $timeout(function () {
+                                    resolve([$scope.itemPrefix + "1", $scope.itemPrefix + "2", $scope.itemPrefix + "3", $scope.itemPrefix + "4"]);
+                                }, 1000);
+                            });
+                        };
+                    }
+                }]);
     </script>
 </body>
 

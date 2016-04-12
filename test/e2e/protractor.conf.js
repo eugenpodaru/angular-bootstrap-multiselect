@@ -1,13 +1,13 @@
-var ScreenShotReporter = require('protractor-screenshot-reporter');
+var ScreenShotReporter = require("protractor-screenshot-reporter");
 
 exports.config = {
     onPrepare: function () {
 
         // Store screenshots on test failure
         jasmine.getEnv().addReporter(new ScreenShotReporter({
-            baseDirectory: 'test/e2e/screenshots/',
+            baseDirectory: "test/e2e/screenshots/",
             pathBuilder: function pathBuilder(spec, descriptions, results, capabilities) {
-                return descriptions.join('-');
+                return descriptions.join("-");
             },
             takeScreenShotsOnlyForFailedSpecs: true
         }));
@@ -17,17 +17,18 @@ exports.config = {
 
         // Disable all animations
         var disableNgAnimate = function () {
-            angular.module('disableNgAnimate', []).run(['$animate', function ($animate) {
+            angular.module("disableNgAnimate", []).run(["$animate", function ($animate) {
                 $animate.enabled(false);
             }]);
         };
-        browser.addMockModule('disableNgAnimate', disableNgAnimate);
+        browser.addMockModule("disableNgAnimate", disableNgAnimate);
     },
-    specs: ['**/*.js'],
+    specs: ["**/*.js"],
+    chromeOnly: true,
     multiCapabilities: [{
-        'browserName': 'chrome',
-        'chromeOptions': {
-            'args': ['show-fps-counter=true']
+        "browserName": "chrome",
+        "chromeOptions": {
+            "args": ["show-fps-counter=true"]
         }
     }]
 };
