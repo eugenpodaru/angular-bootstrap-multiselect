@@ -43,7 +43,7 @@
         vm.$onInit = function() {
             var options = {
                 selectionLimit: 1,
-                searchLimit: 25,
+                searchLimit: 0,
                 selectedDisplayLimit: 5,
                 unselectedDisplayLimit: 10,
                 defaultText: "Select",
@@ -175,7 +175,7 @@
         function search() {
             var counter = 0;
             return function(item) {
-                if (counter > vm.options.searchLimit) {
+                if (vm.options.searchLimit !== 0 && counter > vm.options.searchLimit) {
                     return false;
                 }
                 var displayName = vm.getDisplay(item);
